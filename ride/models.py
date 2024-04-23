@@ -6,7 +6,7 @@ User = get_user_model()
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rating = models.FloatField(null=True)
+    rating = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -15,13 +15,13 @@ class UserProfile(models.Model):
 
 
 class Location(models.Model):
-    longitude = models.FloatField()
     latitude = models.FloatField()
+    longitude = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.longitude} - {self.latitude}"
+        return f"{self.latitude}, {self.longitude}"
 
 
 class Car(models.Model):
@@ -35,17 +35,17 @@ class Car(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.owner.user.username} - {self.plate}"
 
 
 class Ride(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    passengers = models.ManyToManyField(UserProfile, related_name='rides')
+    passengers = models.ManyToManyField(UserProfile, related_name='rides', blank=True)
     starting_hour = models.DateTimeField()
     starting_point = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='rides_as_starting_point')
     destination = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='rides_as_destination')
     estimated_travel_time = models.IntegerField()
-    real_travel_time = models.IntegerField(null=True)
+    real_travel_time = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
