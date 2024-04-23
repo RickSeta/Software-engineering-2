@@ -35,11 +35,12 @@ class Car(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.owner.user.username} - {self.plate}"
+        return f"{self.model} - {self.plate}"
 
 
 class Ride(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    available_seats = models.IntegerField()
     passengers = models.ManyToManyField(UserProfile, related_name='rides', blank=True)
     starting_hour = models.DateTimeField()
     starting_point = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='rides_as_starting_point')

@@ -2,8 +2,8 @@
 
 {% block custom_css %}
   <style>
-    #map {
-      height: 400px;
+    .map {
+      height: 180px;
     }
   </style>
 {% endblock %}
@@ -12,11 +12,41 @@
 
 <h1>Criar carona</h1>
 
-<input id="searchTextField" type="text" size="50" placeholder="Enter a location" autocomplete="on" runat="server" />
-<input id="city2" name="city2" />
-<input id="cityLat" name="cityLat" />
-<input id="cityLng" name="cityLng" />
-<div id="map"></div>
+<form method='post'>
+  {% csrf_token %}
+  <div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group mb-3">
+          <label for="id_car">Carro</label>
+          {{ form.car }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group mb-3">
+          <label for="id_available_seats">Assentos disponíveis</label>
+          {{ form.available_seats }}
+        </div>
+      </div>
+    </div>
+    <div class="form-group mb-3">
+      <label for="id_available_seats">Horário</label>
+      {{ form.starting_hour }}
+    </div>
+    <div class="form-group mb-3">
+      <label for="search-start-point-field">Ponto de partida</label>
+      <input id="search-start-point-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+      <input id="city2" name="city2" />
+      <input id="cityLat" name="cityLat" />
+      <input id="cityLng" name="cityLng" />
+      <div class="map" id="starting-point-map"></div>
+    </div>
+    <div class="form-group">
+      <label>Destino
+
+    </div>
+  </div>
+</form>
 
 {% endblock %}
 
@@ -24,7 +54,7 @@
 <script src="http://maps.googleapis.com/maps/api/js?key=&libraries=places&" type="text/javascript"></script>
 <script type='text/javascript'>
   function initialize() {
-    map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("starting-point-map"), {
         center: { lat: -22.903, lng: -43.132 },
         zoom: 11,
     });
@@ -33,17 +63,17 @@
         map,
         position: { lat: -22.903, lng: -43.132 },
         draggable: true,
-        animation: google.maps.Animation.DROP // Animação ao colocar o marcador
+        animation: google.maps.Animation.DROP
     });
 
-    var input = document.getElementById('searchTextField');
+    var input = document.getElementById('search-start-point-field');
     var autocomplete = new google.maps.places.Autocomplete(input);
     google.maps.event.addListener(autocomplete, 'place_changed', function () {
         var place = autocomplete.getPlace();
         if (!place.geometry) {
             return;
         }
-        map.setCenter(place.geometry.location);
+        map.panTo(place.geometry.location);
         marker.setPosition(place.geometry.location);
         document.getElementById('city2').value = place.name;
         document.getElementById('cityLat').value = place.geometry.location.lat();
@@ -52,7 +82,7 @@
 
     google.maps.event.addListener(marker, 'dragend', function () {
       var pos = marker.getPosition();
-      map.setCenter(pos);
+      map.panTo(pos);
       document.getElementById('cityLat').value = pos.lat();
       document.getElementById('cityLng').value = pos.lng();
 
