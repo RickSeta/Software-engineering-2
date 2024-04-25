@@ -61,12 +61,12 @@
 <script src="http://maps.googleapis.com/maps/api/js?&libraries=places&" type="text/javascript"></script>
 <script type='text/javascript'>
   function initializeStartPoint() {
-    map = new google.maps.Map(document.getElementById("starting-point-map"), {
+    let map = new google.maps.Map(document.getElementById("starting-point-map"), {
         center: { lat: -22.903, lng: -43.132 },
         zoom: 11,
     });
 
-    marker = new google.maps.Marker({
+    let marker = new google.maps.Marker({
         map,
         position: { lat: -22.903, lng: -43.132 },
         draggable: true,
@@ -104,12 +104,12 @@
   }
 
   function initializeDestination() {
-    map = new google.maps.Map(document.getElementById("destination-map"), {
+    let map = new google.maps.Map(document.getElementById("destination-map"), {
         center: { lat: -22.903, lng: -43.132 },
         zoom: 11,
     });
 
-    marker = new google.maps.Marker({
+    let marker = new google.maps.Marker({
         map,
         position: { lat: -22.903, lng: -43.132 },
         draggable: true,
