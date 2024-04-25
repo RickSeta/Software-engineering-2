@@ -10,48 +10,50 @@
 
 {% block content %}
 
-<h1>Criar carona</h1>
-
-<form method='post'>
-  {% csrf_token %}
-  <div class="d-flex flex-column">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group mb-3">
-          <label for="id_car">Carro</label>
-          {{ form.car }}
+<div class="container">
+  <h2>Criar carona</h2>
+  <hr/>
+  <form method='post'>
+    {% csrf_token %}
+    <div class="d-flex flex-column">
+      <div class="form-group mb-3">
+        <label for="id_car">Carro</label>
+        {{ form.car }}
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label for="id_available_seats">Assentos disponíveis</label>
+            {{ form.available_seats }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label for="id_available_seats">Horário</label>
+            {{ form.starting_hour }}
+          </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="form-group mb-3">
-          <label for="id_available_seats">Assentos disponíveis</label>
-          {{ form.available_seats }}
-        </div>
+      <div class="form-group mb-3">
+        <label for="search-start-point-field">Ponto de partida</label>
+        <input id="search-start-point-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+        <input hidden id="search-start-point-field-city2" />
+        <input hidden id="search-start-point-field-city-lat" />
+        <input hidden id="search-start-point-field-city-lng" />
+        <div class="map" id="starting-point-map"></div>
       </div>
+      <div class="form-group mb-3">
+        <label>Destino</label>
+        <input id="search-destination-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+        <input hidden id="search-destination-field-city2" />
+        <input hidden id="search-destination-field-city-lat" />
+        <input hidden id="search-destination-field-city-lng" />
+        <div class="map" id="destination-map"></div>
+      </div>
+      <button class="btn btn-dark align-self-end" type="submit">Confirmar</button>
     </div>
-    <div class="form-group mb-3">
-      <label for="id_available_seats">Horário</label>
-      {{ form.starting_hour }}
-    </div>
-    <div class="form-group mb-3">
-      <label for="search-start-point-field">Ponto de partida</label>
-      <input id="search-start-point-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
-      <input hidden id="search-start-point-field-city2" />
-      <input hidden id="search-start-point-field-city-lat" />
-      <input hidden id="search-start-point-field-city-lng" />
-      <div class="map" id="starting-point-map"></div>
-    </div>
-    <div class="form-group mb-3">
-      <label>Destino</label>
-      <input id="search-destination-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
-      <input hidden id="search-destination-field-city2" />
-      <input hidden id="search-destination-field-city-lat" />
-      <input hidden id="search-destination-field-city-lng" />
-      <div class="map" id="destination-map"></div>
-    </div>
-    <button class="btn btn-dark align-self-end" type="submit">Confirmar</button>
-  </div>
-</form>
+  </form>
+</div>
 
 {% endblock %}
 
