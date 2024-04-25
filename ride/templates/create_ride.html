@@ -43,7 +43,7 @@
         <div class="map" id="starting-point-map"></div>
       </div>
       <div class="form-group mb-3">
-        <label>Destino</label>
+        <label for="search-destination-field">Destino</label>
         <input id="search-destination-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
         <input hidden id="search-destination-field-city2" />
         <input hidden id="search-destination-field-city-lat" />
@@ -58,15 +58,15 @@
 {% endblock %}
 
 {% block custom_js %}
-<script src="http://maps.googleapis.com/maps/api/js?&libraries=places&" type="text/javascript"></script>
+<script src="http://maps.googleapis.com/maps/api/js?key=&libraries=places&" type="text/javascript"></script>
 <script type='text/javascript'>
   function initializeStartPoint() {
-    map = new google.maps.Map(document.getElementById("starting-point-map"), {
+    let map = new google.maps.Map(document.getElementById("starting-point-map"), {
         center: { lat: -22.903, lng: -43.132 },
-        zoom: 11,
+        zoom: 14,
     });
 
-    marker = new google.maps.Marker({
+    let marker = new google.maps.Marker({
         map,
         position: { lat: -22.903, lng: -43.132 },
         draggable: true,
@@ -76,10 +76,10 @@
     var input = document.getElementById('search-start-point-field');
     var autocomplete = new google.maps.places.Autocomplete(input);
     google.maps.event.addListener(autocomplete, 'place_changed', function () {
-        var place = autocomplete.getPlace();
-        if (!place.geometry) {
-            return;
-        }
+      var place = autocomplete.getPlace();
+      if (!place.geometry) {
+        return;
+      }
         map.panTo(place.geometry.location);
         marker.setPosition(place.geometry.location);
         document.getElementById('search-start-point-field-city2').value = place.name;
@@ -97,19 +97,19 @@
       geocoder.geocode({ 'location': pos }, function (results, status) {
         if (status === 'OK' && results[0]) {
           input.value = results[0].formatted_address;
-          document.getElementById('city2').value = results[0].address_components[0].long_name;
+          document.getElementById('search-start-point-field-city2').value = results[0].address_components[0].long_name;
         }
       });
     });
   }
 
   function initializeDestination() {
-    map = new google.maps.Map(document.getElementById("destination-map"), {
+    let map = new google.maps.Map(document.getElementById("destination-map"), {
         center: { lat: -22.903, lng: -43.132 },
-        zoom: 11,
+        zoom: 14,
     });
 
-    marker = new google.maps.Marker({
+    let marker = new google.maps.Marker({
         map,
         position: { lat: -22.903, lng: -43.132 },
         draggable: true,
@@ -140,7 +140,7 @@
       geocoder.geocode({ 'location': pos }, function (results, status) {
         if (status === 'OK' && results[0]) {
           input.value = results[0].formatted_address;
-          document.getElementById('city2').value = results[0].address_components[0].long_name;
+          document.getElementById('search-destination-field-city2').value = results[0].address_components[0].long_name;
         }
       });
     });
