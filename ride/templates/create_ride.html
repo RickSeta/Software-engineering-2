@@ -14,7 +14,7 @@
 
 <form method='post'>
   {% csrf_token %}
-  <div>
+  <div class="d-flex flex-column">
     <div class="row">
       <div class="col-md-6">
         <div class="form-group mb-3">
@@ -36,24 +36,29 @@
     <div class="form-group mb-3">
       <label for="search-start-point-field">Ponto de partida</label>
       <input id="search-start-point-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
-      <input id="city2" name="city2" />
-      <input id="cityLat" name="cityLat" />
-      <input id="cityLng" name="cityLng" />
+      <input hidden id="search-start-point-field-city2" />
+      <input hidden id="search-start-point-field-city-lat" />
+      <input hidden id="search-start-point-field-city-lng" />
       <div class="map" id="starting-point-map"></div>
     </div>
-    <div class="form-group">
-      <label>Destino
-
+    <div class="form-group mb-3">
+      <label>Destino</label>
+      <input id="search-destination-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+      <input hidden id="search-destination-field-city2" />
+      <input hidden id="search-destination-field-city-lat" />
+      <input hidden id="search-destination-field-city-lng" />
+      <div class="map" id="destination-map"></div>
     </div>
+    <button class="btn btn-dark align-self-end" type="submit">Confirmar</button>
   </div>
 </form>
 
 {% endblock %}
 
 {% block custom_js %}
-<script src="http://maps.googleapis.com/maps/api/js?key=&libraries=places&" type="text/javascript"></script>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC7ifTOAEW1hA0RzYEUlg756Vw-f5Hg_Yw&libraries=places&" type="text/javascript"></script>
 <script type='text/javascript'>
-  function initialize() {
+  function initializeStartPoint() {
     map = new google.maps.Map(document.getElementById("starting-point-map"), {
         center: { lat: -22.903, lng: -43.132 },
         zoom: 11,
@@ -75,16 +80,16 @@
         }
         map.panTo(place.geometry.location);
         marker.setPosition(place.geometry.location);
-        document.getElementById('city2').value = place.name;
-        document.getElementById('cityLat').value = place.geometry.location.lat();
-        document.getElementById('cityLng').value = place.geometry.location.lng();
+        document.getElementById('search-start-point-field-city2').value = place.name;
+        document.getElementById('search-start-point-field-city-lat').value = place.geometry.location.lat();
+        document.getElementById('search-start-point-field-city-lng').value = place.geometry.location.lng();
     });
 
     google.maps.event.addListener(marker, 'dragend', function () {
       var pos = marker.getPosition();
       map.panTo(pos);
-      document.getElementById('cityLat').value = pos.lat();
-      document.getElementById('cityLng').value = pos.lng();
+      document.getElementById('search-start-point-field-city-lat').value = pos.lat();
+      document.getElementById('search-start-point-field-city-lng').value = pos.lng();
 
       var geocoder = new google.maps.Geocoder();
       geocoder.geocode({ 'location': pos }, function (results, status) {
@@ -94,6 +99,54 @@
         }
       });
     });
+  }
+
+  function initializeDestination() {
+    map = new google.maps.Map(document.getElementById("destination-map"), {
+        center: { lat: -22.903, lng: -43.132 },
+        zoom: 11,
+    });
+
+    marker = new google.maps.Marker({
+        map,
+        position: { lat: -22.903, lng: -43.132 },
+        draggable: true,
+        animation: google.maps.Animation.DROP
+    });
+
+    var input = document.getElementById('search-destination-field');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+    google.maps.event.addListener(autocomplete, 'place_changed', function () {
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+            return;
+        }
+        map.panTo(place.geometry.location);
+        marker.setPosition(place.geometry.location);
+        document.getElementById('search-destination-field-city2').value = place.name;
+        document.getElementById('search-destination-field-city-lat').value = place.geometry.location.lat();
+        document.getElementById('search-destination-field-city-lng').value = place.geometry.location.lng();
+    });
+
+    google.maps.event.addListener(marker, 'dragend', function () {
+      var pos = marker.getPosition();
+      map.panTo(pos);
+      document.getElementById('search-destination-field-city-lat').value = pos.lat();
+      document.getElementById('search-destination-field-city-lng').value = pos.lng();
+
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ 'location': pos }, function (results, status) {
+        if (status === 'OK' && results[0]) {
+          input.value = results[0].formatted_address;
+          document.getElementById('city2').value = results[0].address_components[0].long_name;
+        }
+      });
+    });
+  }
+
+  function initialize () {
+    initializeStartPoint();
+    initializeDestination();
   }
 
   google.maps.event.addDomListener(window, 'load', initialize);
