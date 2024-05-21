@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import FormView
-
 from ride.forms.ride_form import RideForm
 from ride.models import UserProfile
+
+
 
 
 class CreateRideView(FormView):
