@@ -15,6 +15,7 @@ class UserProfile(models.Model):
 
 
 class Location(models.Model):
+    address = models.CharField(max_length=200)
     latitude = models.FloatField()
     longitude = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
