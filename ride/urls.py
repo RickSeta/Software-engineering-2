@@ -1,9 +1,9 @@
 from django.urls import path
-
 from ride.views.create_ride_view import CreateRideView
 from ride.views.profile_view import ProfileView
 from ride.views.search_ride_view import SearchRideView
 
+app_name = 'ride'
 
 urlpatterns = [
     path('criar/', CreateRideView.as_view(), name='create_ride'),

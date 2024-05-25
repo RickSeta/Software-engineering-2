@@ -1,42 +1,55 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-
 <h1></h1>
-  <div class="container justify-content-center align-items-center vh-100">
-    <div class="row">
-      <h1 class="text-center mt-5">BUSCAR CARONA</h1>
-    </div>
-    <hr class="my-5">
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow" style="border-radius: 15px; width: 40%; margin: auto;">
-          <div class="card-body text-center">
-            <form action="{% url 'ride:search_ride' %}" method="post">
-
-              {% csrf_token %}
-              <div class="mb-4">
-                <label for="starting_point" class="form-label">Local de Partida:</label>
-                <input type="text" class="form-control" id="starting_point" name="starting_point">
-              </div>
-              <div class="mb-4">
-                <label for="destination" class="form-label">Destino:</label>
-                <input type="text" class="form-control" id="destination" name="destination">
-              </div>
-              <div class="mb-4">
-                <label for="datetime" class="form-label">Data e Hora:</label>
-                <input type="datetime-local" class="form-control" id="datetime" name="datetime">
-              </div>
-              <div class="mb-4">
-                <label for="passengers" class="form-label">Quantidade de Passageiros:</label>
-                <input type="number" class="form-control" id="passengers" name="passengers">
-              </div>
-              <button type="submit" class="btn btn-outline-primary btn-rounded btn-lg">Buscar</button>
-            </form>
-          </div>
+<div class="container justify-content-center align-items-center vh-100">
+  <div class="row">
+    <h1 class="text-center mt-5">BUSCAR CARONA</h1>
+  </div>
+  <hr class="my-5">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow" style="border-radius: 15px; width: 40%; margin: auto;">
+        <div class="card-body text-center">
+          <form id="search-ride-form">
+            {% csrf_token %}
+            <div class="mb-4 input-group">
+              <label for="starting_point" class="form-label w-100 text-start">Local de Partida:</label>
+              <input type="text" class="form-control" id="starting_point" name="starting_point" required>
+              <input type="hidden" id="starting_point_coords" name="starting_point_coords">
+              <button type="button" class="btn btn-outline-secondary" id="starting_point_map_btn">
+                <i class="fas fa-map-marker-alt"></i>
+              </button>
+            </div>
+            <div class="mb-4 input-group">
+              <label for="destination" class="form-label w-100 text-start">Destino:</label>
+              <input type="text" class="form-control" id="destination" name="destination" required>
+              <input type="hidden" id="destination_coords" name="destination_coords">
+              <button type="button" class="btn btn-outline-secondary" id="destination_map_btn">
+                <i class="fas fa-map-marker-alt"></i>
+              </button>
+            </div>
+            <div class="mb-4">
+              <label for="starting_hour" class="form-label">Data e Hora:</label>
+              <input type="datetime-local" class="form-control" id="starting_hour" name="starting_hour" required>
+            </div>
+            <div class="mb-4">
+              <label for="passengers" class="form-label">Quantidade de Passageiros:</label>
+              <input type="number" class="form-control" id="passengers" name="passengers" required>
+            </div>
+            <button type="submit" class="btn btn-outline-primary btn-rounded btn-lg">Buscar</button>
+          </form>
+          <div id="results" class="mt-4"></div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
+<div id="map" style="height: 500px; width: 100%;"></div>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7tOzctlkLRIJdLBUuFbbPy5YoKoB0jjA&libraries=places&callback=initMap"></script>
+<script async defer src="{% static 'js/maps.js' %}"></script>
+<script async defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" crossorigin="anonymous"></script>
 {% endblock %}
