@@ -8,10 +8,10 @@ class CarFactory:
             {
                 'id': model.id,
                 'owner_id': model.owner.id,
-                'name': model.plate,
-                'model': model.brand,
-                'year': model.model,
+                'name': model.name,
+                'model': model.model,
+                'year': model.year,
                 'color': model.color,
-                'plate': model.year,
+                'plate': model.plate,
             }
         )

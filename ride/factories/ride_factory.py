@@ -1,5 +1,6 @@
 from ride.domain import Ride
-from ride.factories import LocationFactory, CarFactory
+from ride.factories.location_factory import LocationFactory
+from ride.factories.car_factory import CarFactory
 
 
 class RideFactory:

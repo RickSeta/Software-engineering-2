@@ -21,3 +21,7 @@ class RideRepository:
             }
         )
         return self.factory.create_from_model(model)
+
+    def get_by_id(self, id):
+        model = self.model.objects.get(id=id)
+        return self.factory.create_from_model(model)
