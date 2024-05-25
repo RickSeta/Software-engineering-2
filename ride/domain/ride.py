@@ -2,6 +2,8 @@ class Ride:
 
     def __init__(self, attributes):
         self.id = attributes.get('id')
+        self.status = attributes.get('status')
+        self.status_display_name = attributes.get('status_display_name')
         self.car = attributes.get('car')
         self.available_seats = attributes.get('available_seats')
         self.passengers = attributes.get('passengers')

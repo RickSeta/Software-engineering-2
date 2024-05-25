@@ -1,6 +1,7 @@
 from ride.domain import Ride
 from ride.factories.location_factory import LocationFactory
 from ride.factories.car_factory import CarFactory
+from ride.constants import RIDE_STATUS_DISPLAY_NAME
 
 
 class RideFactory:
@@ -13,6 +14,8 @@ class RideFactory:
         return Ride(
             {
                 'id': model.id,
+                'status': model.status,
+                'status_display_name': RIDE_STATUS_DISPLAY_NAME.get(model.status),
                 'car': self.car_factory.create_from_model(model.car),
                 'available_seats': model.available_seats,
                 # 'passengers': model.passengers,

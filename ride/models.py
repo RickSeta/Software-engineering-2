@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from ride.constants import RideStatus
+
 User = get_user_model()
 
 
@@ -40,6 +42,10 @@ class Car(models.Model):
 
 
 class Ride(models.Model):
+    status = models.CharField(
+        max_length=50, choices=[(status.name, status.value) for status in RideStatus],
+        default=RideStatus.SCHEDULED.value
+    )
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     available_seats = models.IntegerField()
     passengers = models.ManyToManyField(UserProfile, related_name='rides', blank=True)
@@ -50,6 +56,9 @@ class Ride(models.Model):
     real_travel_time = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    canceled_at = models.DateTimeField(blank=True, null=True)
+    finished_at = models.DateTimeField(blank=True, null=True)
+    started_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.car.model} - {self.starting_hour}"
