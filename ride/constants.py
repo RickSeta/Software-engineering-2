@@ -16,8 +16,8 @@ class RideStatusDisplayName(Enum):
 
 
 RIDE_STATUS_DISPLAY_NAME = {
-    RideStatus.SCHEDULED: RideStatusDisplayName.SCHEDULED,
-    RideStatus.IN_PROGRESS: RideStatusDisplayName.IN_PROGRESS,
-    RideStatus.COMPLETED: RideStatusDisplayName.COMPLETED,
-    RideStatus.CANCELLED: RideStatusDisplayName.CANCELLED,
+    RideStatus.SCHEDULED.value: RideStatusDisplayName.SCHEDULED.value,
+    RideStatus.IN_PROGRESS.value: RideStatusDisplayName.IN_PROGRESS.value,
+    RideStatus.COMPLETED.value: RideStatusDisplayName.COMPLETED.value,
+    RideStatus.CANCELLED.value: RideStatusDisplayName.CANCELLED.value,
 }
