@@ -67,7 +67,7 @@ function placeMarker(location, type) {
         label: "A"
       });
     }
-    setLocation("starting_point", location);
+    document.getElementById("starting_point").value = location.lat() + ", " + location.lng();
   } else if (type === "end") {
     if (endMarker) {
       endMarker.setPosition(location);
@@ -78,27 +78,11 @@ function placeMarker(location, type) {
         label: "B"
       });
     }
-    setLocation("destination", location);
+    document.getElementById("destination").value = location.lat() + ", " + location.lng();
   }
   if (startMarker && endMarker) {
     calculateAndDisplayRoute();
   }
-}
-
-function setLocation(inputId, location) {
-  const geocoder = new google.maps.Geocoder();
-  geocoder.geocode({ location: location }, (results, status) => {
-    if (status === "OK") {
-      if (results[0]) {
-        document.getElementById(inputId).value = results[0].formatted_address;
-        document.getElementById(inputId + "_coords").value = location.lat() + ", " + location.lng();
-      } else {
-        window.alert("No results found");
-      }
-    } else {
-      window.alert("Geocoder failed due to: " + status);
-    }
-  });
 }
 
 function calculateAndDisplayRoute() {

@@ -47,9 +47,99 @@
   </div>
 </div>
 
-<div id="map" style="height: 500px; width: 100%;"></div>
+<script>
+  document.getElementById('search-ride-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const startingPoint = document.getElementById('starting_point').value;
+    const startingPointCoords = document.getElementById('starting_point_coords').value;
+    const destination = document.getElementById('destination').value;
+    const destinationCoords = document.getElementById('destination_coords').value;
+    const startingHour = document.getElementById('starting_hour').value;
+    const passengers = document.getElementById('passengers').value;
+  
+    const data = {
+      csrfmiddlewaretoken: csrftoken,
+      starting_point: startingPoint,
+      starting_point_coords: startingPointCoords,
+      destination: destination,
+      destination_coords: destinationCoords,
+      starting_hour: startingHour,
+      passengers: passengers
+    };
 
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7tOzctlkLRIJdLBUuFbbPy5YoKoB0jjA&libraries=places&callback=initMap"></script>
-<script async defer src="{% static 'js/maps.js' %}"></script>
-<script async defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" crossorigin="anonymous"></script>
+    console.log("Enviando dados:", data);
+  
+    fetch("{% url 'ride:search_ride' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.text().then(text => { throw new Error(text) })
+      }
+      return response.json()
+    })
+    .then(data => {
+      console.log('Success:', data);
+
+      if (data.rides) {
+        let resultsHTML = '<h3>Rides Disponíveis:</h3><ul>';
+        data.rides.forEach(ride => {
+          resultsHTML += `
+            <li>
+              Car: ${ride.car}<br>
+              Horário: ${ride.starting_hour}<br>
+              Assentos Disponíveis: ${ride.available_seats}<br>
+              Partida: ${ride.starting_point}<br>
+              Destino: ${ride.destination}<br>
+            </li>
+          `;
+        });
+        resultsHTML += '</ul>';
+        document.getElementById("results").innerHTML = resultsHTML;
+      } else {
+        document.getElementById("results").innerHTML = `<p>${data.message}</p>`;
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert("Ocorreu um erro: " + error.message);
+    });
+  });
+
+  function initAutocomplete() {
+    const inputStart = document.getElementById("starting_point");
+    const inputEnd = document.getElementById("destination");
+
+    const autocompleteStart = new google.maps.places.Autocomplete(inputStart);
+    const autocompleteEnd = new google.maps.places.Autocomplete(inputEnd);
+
+    autocompleteStart.addListener('place_changed', function() {
+      const place = autocompleteStart.getPlace();
+      if (!place.geometry) {
+        alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      const location = place.geometry.location;
+      document.getElementById('starting_point_coords').value = `${location.lat()}, ${location.lng()}`;
+    });
+
+    autocompleteEnd.addListener('place_changed', function() {
+      const place = autocompleteEnd.getPlace();
+      if (!place.geometry) {
+        alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      const location = place.geometry.location;
+      document.getElementById('destination_coords').value = `${location.lat()}, ${location.lng()}`;
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7tOzctlkLRIJdLBUuFbbPy5YoKoB0jjA&libraries=places&callback=initAutocomplete"></script>
 {% endblock %}
