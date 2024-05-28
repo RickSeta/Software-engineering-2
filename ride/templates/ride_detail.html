@@ -8,6 +8,49 @@
 <div class="container">
   <h2>Carona</h2>
   <hr/>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <b>Motorista:</b> {{ ride.driver.name }}
+    </div>
+    <div class="col-sm-6">
+      <b>Carro:</b> {{ ride.car.model }}
+    </div>
+    <div class="col-sm-6">
+      <b>Placa:</b> {{ ride.car.plate }}
+    </div>
+    <div class="col-sm-12">
+      <b>Ponto de partida:</b> {{ ride.starting_point.address }}
+    </div>
+    <div class="col-sm-12">
+      <b>Destino:</b> {{ ride.destination.address }}
+    </div>
+    <div class="col-sm-6">
+      <b>Data e Hora:</b> {{ ride.starting_hour }}
+    </div>
+    <div class="col-sm-6">
+      <b>Tempo previsto de viagem:</b> {{ ride.estimated_travel_time }}
+    </div>
+    <div class="col-sm-6">
+      <b>Status:</b> {{ ride.status_display_name }}
+    </div>
+    <div class="col-sm-12">
+      <b>Passageiros:</b>
+      {% if ride.passengers %}
+      <ul>
+        <li>
+          {% for passenger in ride.passengers %}
+            {{ passenger.name }}
+          {% endfor %}
+      </ul>
+      {% else %}
+        Nenhum passageiro
+      {% endif %}
+    </div>
+  </div>
+
+  <div>
+  </div>
 </div>
 
 {% endblock %}

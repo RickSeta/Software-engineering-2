@@ -7,9 +7,9 @@ class UserProfileFactory:
         return UserProfile(
             {
                 'id': model.id,
-                'name': f"{model.first_name} {model.last_name}",
-                'username': model.username,
-                'email': model.email,
+                'name': f"{model.user.first_name} {model.user.last_name}",
+                'username': model.user.username,
+                'email': model.user.email,
                 'rating': model.rating,
             }
         )

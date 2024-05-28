@@ -12,20 +12,22 @@ class RideFactory:
         self.car_factory = car_factory or CarFactory()
         self.user_profile_factory = user_profile_factory or UserProfileFactory()
 
-    def create_from_model(self, model):
-        return Ride(
-            {
-                'id': model.id,
-                'status': model.status,
-                'status_display_name': RIDE_STATUS_DISPLAY_NAME.get(model.status),
-                'car': self.car_factory.create_from_model(model.car),
-                'driver': self.user_factory.create_from_model(model.car.owner),
-                'available_seats': model.available_seats,
-                # 'passengers': model.passengers,
-                'starting_hour': model.starting_hour,
-                'starting_point': self.location_factory.create_from_model(model.starting_point),
-                'destination': self.location_factory.create_from_model(model.destination),
-                'estimated_travel_time': model.estimated_travel_time,
-                'real_travel_time': model.real_travel_time
-            }
-        )
+    def create_from_model(self, model, map_passengers=False):
+        attributes = {
+            'id': model.id,
+            'status': model.status,
+            'status_display_name': RIDE_STATUS_DISPLAY_NAME.get(model.status),
+            'car': self.car_factory.create_from_model(model.car),
+            'driver': self.user_profile_factory.create_from_model(model.car.owner),
+            'available_seats': model.available_seats,
+            'starting_hour': model.starting_hour,
+            'starting_point': self.location_factory.create_from_model(model.starting_point),
+            'destination': self.location_factory.create_from_model(model.destination),
+            'estimated_travel_time': model.estimated_travel_time,
+            'real_travel_time': model.real_travel_time
+        }
+
+        if map_passengers:
+            attributes['passengers'] = [self.user_profile_factory.create_from_model(passenger) for passenger in model.passengers.all()]
+
+        return Ride(attributes)

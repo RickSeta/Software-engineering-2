@@ -24,4 +24,11 @@ class RideRepository:
 
     def get_by_id(self, id):
         model = self.model.objects.get(id=id)
+        return self.factory.create_from_model(model, map_passengers=True)
+
+    def update_by_id(self, id, **kwargs):
+        model = self.model.objects.get(id=id)
+        for key, value in kwargs.items():
+            setattr(model, key, value)
+        model.save()
         return self.factory.create_from_model(model)

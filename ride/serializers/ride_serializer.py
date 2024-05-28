@@ -10,6 +10,7 @@ class RideSerializer(serializers.Serializer):
     status_display_name = serializers.CharField()
     driver = UserProfileSerializer()
     available_seats = serializers.IntegerField()
+    passengers = UserProfileSerializer(many=True, required=False)
     starting_hour = serializers.DateTimeField()
     starting_point = LocationSerializer()
     destination = LocationSerializer()
