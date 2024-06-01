@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
+{% load tags %}
 
 {% block content %}
-<h1></h1>
 <div class="container justify-content-center align-items-center vh-100">
   <div class="row">
-    <h1 class="text-center mt-5">BUSCAR CARONA</h1>
+    <h1 class="text-center mt-5">CARONAS DISPONÍVEIS</h1>
   </div>
   <hr class="my-5">
-  <div class="row">
+  <div class="row mb-5">
     <div class="col-12">
       <div class="card shadow" style="border-radius: 15px; width: 40%; margin: auto;">
         <div class="card-body text-center">
@@ -30,20 +30,65 @@
                 <i class="fas fa-map-marker-alt"></i>
               </button>
             </div>
-            <div class="mb-4">
-              <label for="starting_hour" class="form-label">Data e Hora:</label>
-              <input type="datetime-local" class="form-control" id="starting_hour" name="starting_hour" required>
-            </div>
-            <div class="mb-4">
-              <label for="passengers" class="form-label">Quantidade de Passageiros:</label>
-              <input type="number" class="form-control" id="passengers" name="passengers" required>
+            <div class="row mb-4">
+              <div class="col-6">
+                <label for="starting_hour" class="form-label">Data e Hora:</label>
+                <input type="datetime-local" class="form-control" id="starting_hour" name="starting_hour" required>
+              </div>
+              <div class="col-6">
+                <label for="passengers" class="form-label">Quantidade de Passageiros:</label>
+                <input type="number" class="form-control" id="passengers" name="passengers" required>
+              </div>
             </div>
             <button type="submit" class="btn btn-outline-primary btn-rounded btn-lg">Buscar</button>
           </form>
-          <div id="results" class="mt-4"></div>
+          <div id="solicitacao" class="mt-4"></div>
         </div>
       </div>
     </div>
+  </div>
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+  {% endif %}
+  <div id="ride-results">
+    {% for ride in rides %}
+      <div class="card mt-4">
+        <div class="card-header fw-bold">
+          {{ ride.car.owner }} - {{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">
+              <p class="card-text"><strong>Carro:</strong> {{ ride.car }}</p>
+              <p class="card-text"><strong>Cor:</strong> {{ ride.car.color }}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Partida:</strong> {{ ride.starting_point|to_place }}</p>
+              <p class="card-text"><strong>Destino:</strong> {{ ride.destination|to_place }}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Horário:</strong> {{ ride.starting_hour }}</p>
+              <p class="card-text"><strong>Assentos Disponíveis:</strong> {{ ride.available_seats }}</p>
+            </div>
+            <div class="col-3 my-auto pe-auto">
+              {% if request.user.userprofile in ride.passengers.all %}
+                  <button class="btn btn-secondary btn-lg" disabled>Já entrou</button>
+              {% else %}
+                  <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-lg">Entrar</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="alert alert-warning" role="alert">
+        Nenhuma carona disponível no momento
+      </div>
+    {% endfor %}
   </div>
 </div>
 
@@ -87,24 +132,11 @@
     })
     .then(data => {
       console.log('Success:', data);
-
       if (data.rides) {
-        let resultsHTML = '<h3>Rides Disponíveis:</h3><ul>';
-        data.rides.forEach(ride => {
-          resultsHTML += `
-            <li>
-              Car: ${ride.car}<br>
-              Horário: ${ride.starting_hour}<br>
-              Assentos Disponíveis: ${ride.available_seats}<br>
-              Partida: ${ride.starting_point}<br>
-              Destino: ${ride.destination}<br>
-            </li>
-          `;
-        });
-        resultsHTML += '</ul>';
-        document.getElementById("results").innerHTML = resultsHTML;
+        updateRides(data.rides);
       } else {
-        document.getElementById("results").innerHTML = `<p>${data.message}</p>`;
+        const solicitacao = document.getElementById('solicitacao');
+        solicitacao.innerHTML = '<div class="alert alert-warning" role="alert">Não encontramos sua carona, porém uma solicitação foi criada com sucesso. Assim que ela for atendida, você será notificado.</div>';
       }
     })
     .catch((error) => {
@@ -112,6 +144,55 @@
       alert("Ocorreu um erro: " + error.message);
     });
   });
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const optionsDate = { day: 'numeric', month: 'long', year: 'numeric' };
+    const optionsTime = { hour: '2-digit', minute: '2-digit' };
+  
+    const formattedDate = date.toLocaleDateString('pt-BR', optionsDate);
+    const formattedTime = date.toLocaleTimeString('pt-BR', optionsTime);
+  
+    return `${formattedDate} às ${formattedTime}`;
+  }
+  
+
+  function updateRides(rides) {
+    const rideResultsContainer = document.getElementById('ride-results');
+  
+    rideResultsContainer.innerHTML = ''; // Limpar resultados anteriores
+    rides.forEach(ride => {
+      const rideCard = document.createElement('div');
+      rideCard.className = 'card mt-4';
+      rideCard.innerHTML = `
+        <div class="card-header fw-bold">
+          ${ride.owner} - ${ride.owner_rating} <i class="bi bi-star-fill"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">
+              <p class="card-text"><strong>Carro:</strong> ${ride.car}</p>
+              <p class="card-text"><strong>Cor:</strong> ${ride.car_color}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Partida:</strong> ${ride.starting_point}</p>
+              <p class="card-text"><strong>Destino:</strong> ${ride.destination}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Horário:</strong> ${formatDate(ride.starting_hour)}</p>
+              <p class="card-text"><strong>Assentos Disponíveis:</strong> ${ride.available_seats}</p>
+            </div>
+            <div class="col-3 my-auto pe-auto">
+              ${ride.is_passenger ? 
+                '<button class="btn btn-secondary btn-lg" disabled>Já entrou</button>' :
+                `<a href="/ride/join/${ride.id}" class="btn btn-success btn-lg">Entrar</a>`}
+            </div>
+          </div>
+        </div>
+      `;
+      rideResultsContainer.appendChild(rideCard);
+    });
+  }
 
   function initAutocomplete() {
     const inputStart = document.getElementById("starting_point");

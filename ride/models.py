@@ -63,7 +63,7 @@ class RideRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.author} - {self.starting_hour}"
+        return f"{self.created_by} - {self.starting_hour}"
 
 
 class Review(models.Model):
