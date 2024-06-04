@@ -3,6 +3,8 @@ from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+
+
 class SearchRideView(TemplateView):
     template_name = 'search_ride.html'
 

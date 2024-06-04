@@ -6,5 +6,5 @@ from ride import urls as ride_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('carona/', include((ride_urls, 'ride'), namespace='ride')),
+    path('', include((ride_urls, 'ride'), 'ride')),
 ]
