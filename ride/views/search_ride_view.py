@@ -8,6 +8,8 @@ import json
 from ride.views.profile_view import User
 from ..models import Ride, RideRequest, Place, Location, UserProfile
 
+
+
 class SearchRideView(TemplateView):
     template_name = 'search_ride.html'
 
