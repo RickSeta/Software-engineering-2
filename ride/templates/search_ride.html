@@ -1,42 +1,226 @@
 {% extends "base.html" %}
+{% load static %}
+{% load tags %}
 
 {% block content %}
-
-<h1></h1>
-  <div class="container justify-content-center align-items-center vh-100">
-    <div class="row">
-      <h1 class="text-center mt-5">BUSCAR CARONA</h1>
-    </div>
-    <hr class="my-5">
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow" style="border-radius: 15px; width: 40%; margin: auto;">
-          <div class="card-body text-center">
-            <form action="{% url 'ride:search_ride' %}" method="post">
-
-              {% csrf_token %}
-              <div class="mb-4">
-                <label for="starting_point" class="form-label">Local de Partida:</label>
-                <input type="text" class="form-control" id="starting_point" name="starting_point">
+<div class="container justify-content-center align-items-center vh-100">
+  <div class="row">
+    <h1 class="text-center mt-5">CARONAS DISPONÍVEIS</h1>
+  </div>
+  <hr class="my-5">
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card shadow" style="border-radius: 15px; width: 40%; margin: auto;">
+        <div class="card-body text-center">
+          <form id="search-ride-form">
+            {% csrf_token %}
+            <div class="mb-4 input-group">
+              <label for="starting_point" class="form-label w-100 text-start">Local de Partida:</label>
+              <input type="text" class="form-control" id="starting_point" name="starting_point" required>
+              <input type="hidden" id="starting_point_coords" name="starting_point_coords">
+              <button type="button" class="btn btn-outline-secondary" id="starting_point_map_btn">
+                <i class="fas fa-map-marker-alt"></i>
+              </button>
+            </div>
+            <div class="mb-4 input-group">
+              <label for="destination" class="form-label w-100 text-start">Destino:</label>
+              <input type="text" class="form-control" id="destination" name="destination" required>
+              <input type="hidden" id="destination_coords" name="destination_coords">
+              <button type="button" class="btn btn-outline-secondary" id="destination_map_btn">
+                <i class="fas fa-map-marker-alt"></i>
+              </button>
+            </div>
+            <div class="row mb-4">
+              <div class="col-6">
+                <label for="starting_hour" class="form-label">Data e Hora:</label>
+                <input type="datetime-local" class="form-control" id="starting_hour" name="starting_hour" required>
               </div>
-              <div class="mb-4">
-                <label for="destination" class="form-label">Destino:</label>
-                <input type="text" class="form-control" id="destination" name="destination">
-              </div>
-              <div class="mb-4">
-                <label for="datetime" class="form-label">Data e Hora:</label>
-                <input type="datetime-local" class="form-control" id="datetime" name="datetime">
-              </div>
-              <div class="mb-4">
+              <div class="col-6">
                 <label for="passengers" class="form-label">Quantidade de Passageiros:</label>
-                <input type="number" class="form-control" id="passengers" name="passengers">
+                <input type="number" class="form-control" id="passengers" name="passengers" required>
               </div>
-              <button type="submit" class="btn btn-outline-primary btn-rounded btn-lg">Buscar</button>
-            </form>
-          </div>
+            </div>
+            <button type="submit" class="btn btn-outline-primary btn-rounded btn-lg">Buscar</button>
+          </form>
+          <div id="solicitacao" class="mt-4"></div>
         </div>
       </div>
     </div>
   </div>
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+  {% endif %}
+  <div id="ride-results">
+    {% for ride in rides %}
+      <div class="card mt-4">
+        <div class="card-header fw-bold">
+          {{ ride.car.owner }} - {{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">
+              <p class="card-text"><strong>Carro:</strong> {{ ride.car }}</p>
+              <p class="card-text"><strong>Cor:</strong> {{ ride.car.color }}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Partida:</strong> {{ ride.starting_point|to_place }}</p>
+              <p class="card-text"><strong>Destino:</strong> {{ ride.destination|to_place }}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Horário:</strong> {{ ride.starting_hour }}</p>
+              <p class="card-text"><strong>Assentos Disponíveis:</strong> {{ ride.available_seats }}</p>
+            </div>
+            <div class="col-3 my-auto pe-auto">
+              {% if request.user.userprofile in ride.passengers.all %}
+                  <button class="btn btn-secondary btn-lg" disabled>Já entrou</button>
+              {% else %}
+                  <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-lg">Entrar</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="alert alert-warning" role="alert">
+        Nenhuma carona disponível no momento
+      </div>
+    {% endfor %}
+  </div>
+</div>
 
+<script>
+  document.getElementById('search-ride-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const startingPoint = document.getElementById('starting_point').value;
+    const startingPointCoords = document.getElementById('starting_point_coords').value;
+    const destination = document.getElementById('destination').value;
+    const destinationCoords = document.getElementById('destination_coords').value;
+    const startingHour = document.getElementById('starting_hour').value;
+    const passengers = document.getElementById('passengers').value;
+  
+    const data = {
+      csrfmiddlewaretoken: csrftoken,
+      starting_point: startingPoint,
+      starting_point_coords: startingPointCoords,
+      destination: destination,
+      destination_coords: destinationCoords,
+      starting_hour: startingHour,
+      passengers: passengers
+    };
+
+    console.log("Enviando dados:", data);
+  
+    fetch("{% url 'ride:search_ride' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.text().then(text => { throw new Error(text) })
+      }
+      return response.json()
+    })
+    .then(data => {
+      console.log('Success:', data);
+      if (data.rides) {
+        updateRides(data.rides);
+      } else {
+        const solicitacao = document.getElementById('solicitacao');
+        solicitacao.innerHTML = '<div class="alert alert-warning" role="alert">Não encontramos sua carona, porém uma solicitação foi criada com sucesso. Assim que ela for atendida, você será notificado.</div>';
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert("Ocorreu um erro: " + error.message);
+    });
+  });
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const optionsDate = { day: 'numeric', month: 'long', year: 'numeric' };
+    const optionsTime = { hour: '2-digit', minute: '2-digit' };
+  
+    const formattedDate = date.toLocaleDateString('pt-BR', optionsDate);
+    const formattedTime = date.toLocaleTimeString('pt-BR', optionsTime);
+  
+    return `${formattedDate} às ${formattedTime}`;
+  }
+  
+
+  function updateRides(rides) {
+    const rideResultsContainer = document.getElementById('ride-results');
+  
+    rideResultsContainer.innerHTML = ''; // Limpar resultados anteriores
+    rides.forEach(ride => {
+      const rideCard = document.createElement('div');
+      rideCard.className = 'card mt-4';
+      rideCard.innerHTML = `
+        <div class="card-header fw-bold">
+          ${ride.owner} - ${ride.owner_rating} <i class="bi bi-star-fill"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">
+              <p class="card-text"><strong>Carro:</strong> ${ride.car}</p>
+              <p class="card-text"><strong>Cor:</strong> ${ride.car_color}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Partida:</strong> ${ride.starting_point}</p>
+              <p class="card-text"><strong>Destino:</strong> ${ride.destination}</p>
+            </div>
+            <div class="col-3">
+              <p class="card-text"><strong>Horário:</strong> ${formatDate(ride.starting_hour)}</p>
+              <p class="card-text"><strong>Assentos Disponíveis:</strong> ${ride.available_seats}</p>
+            </div>
+            <div class="col-3 my-auto pe-auto">
+              ${ride.is_passenger ? 
+                '<button class="btn btn-secondary btn-lg" disabled>Já entrou</button>' :
+                `<a href="/ride/join/${ride.id}" class="btn btn-success btn-lg">Entrar</a>`}
+            </div>
+          </div>
+        </div>
+      `;
+      rideResultsContainer.appendChild(rideCard);
+    });
+  }
+
+  function initAutocomplete() {
+    const inputStart = document.getElementById("starting_point");
+    const inputEnd = document.getElementById("destination");
+
+    const autocompleteStart = new google.maps.places.Autocomplete(inputStart);
+    const autocompleteEnd = new google.maps.places.Autocomplete(inputEnd);
+
+    autocompleteStart.addListener('place_changed', function() {
+      const place = autocompleteStart.getPlace();
+      if (!place.geometry) {
+        alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      const location = place.geometry.location;
+      document.getElementById('starting_point_coords').value = `${location.lat()}, ${location.lng()}`;
+    });
+
+    autocompleteEnd.addListener('place_changed', function() {
+      const place = autocompleteEnd.getPlace();
+      if (!place.geometry) {
+        alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      const location = place.geometry.location;
+      document.getElementById('destination_coords').value = `${location.lat()}, ${location.lng()}`;
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7tOzctlkLRIJdLBUuFbbPy5YoKoB0jjA&libraries=places&callback=initAutocomplete"></script>
 {% endblock %}
