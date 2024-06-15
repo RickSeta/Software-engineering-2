@@ -1,9 +1,10 @@
 from django.shortcuts import redirect
 from django.views.generic import FormView
-
 from ride.forms.ride_form import RideForm
 from ride.models import UserProfile
 from ride.use_cases import CreateRideUseCase
+
+
 
 
 class CreateRideView(FormView):
