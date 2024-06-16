@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% load static %}
   <div class="container justify-content-center align-items-center vh-100">
     <div class="row">
       <h1 class="text-center mt-5">PERFIL</h1>
@@ -11,7 +11,7 @@
         <div class="card shadow" style="border-radius: 15px; max-width: 40%; margin: auto;">
           <div class="card-body text-center">
             <div class="mt-3 mb-4">
-              <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-fluid" style="width: 150px;" />
+              <img src="{% static profile.profile_picture.url %}" alt="Profile Picture" class="rounded-circle img-fluid" style="width: 150px;" />
             </div>
             <h4 class="mb-2">{{ profile.user }}</h4>
             <p class="text-muted">{{ profile.course }}</p>

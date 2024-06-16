@@ -10,4 +10,4 @@ urlpatterns = [
     path('criar/', CreateRideView.as_view(), name='create_ride'),
     path('perfil/', ProfileView.as_view(), name='profile'),
     path('buscar/', SearchRideView.as_view(), name='search_ride'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 

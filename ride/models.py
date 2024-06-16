@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     course = models.CharField(max_length=255, blank=True, null=True)
     car = models.CharField(max_length=255, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='static/profile_pictures', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
