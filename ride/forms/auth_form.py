@@ -5,10 +5,12 @@ from django.contrib.auth.models import User
 class SignupForm(UserCreationForm):
     username = forms.CharField(
         max_length=150,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        label='Nome de Usuário',
+        widget=forms.TextInput(attrs={'class': 'form-control'},)
     )
     email = forms.EmailField(
         max_length=150,
+        label='E-mail',
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
     password1 = forms.CharField(

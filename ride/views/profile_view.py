@@ -15,7 +15,6 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     def get(self, request):
         user_profile = UserProfile.objects.get(user=request.user)
         form = UserProfileForm(instance=user_profile)
-        
         context = {
             'profile': user_profile,
             'form': form,
