@@ -59,8 +59,11 @@
     <nav class="w-100 custom-nav">
       <div>
         <a href="{% url 'ride:search_ride' %}">
-          <i class="bi bi-search"></i> <span>Buscar</span>
+          <i class="bi bi-view-list"></i> <span>Caronas</span>
         </a>
+        {% comment %} <a href="{% url 'ride:search_ride' %}">
+          <i class="bi bi-search"></i> <span>Buscar</span>
+        </a> {% endcomment %}
         <a href="{% url 'ride:create_ride' %}">
           <i class="bi bi-plus"></i> <span>Criar</span>
         </a>
