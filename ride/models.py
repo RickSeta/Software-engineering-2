@@ -3,16 +3,17 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    course = models.CharField(max_length=255, blank=True, null=True)
+    car = models.CharField(max_length=255, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='static/profile_pictures', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
-
 
 class Location(models.Model):
     latitude = models.FloatField()
@@ -25,7 +26,7 @@ class Location(models.Model):
 
 
 class Car(models.Model):
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='owned_car')
     name = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
     year = models.IntegerField()

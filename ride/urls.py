@@ -1,7 +1,9 @@
 from django.urls import path, include
 
+from django.conf import settings
 from ride.views.create_ride_view import CreateRideView
 from ride.views.profile_view import ProfileView
+from django.conf.urls.static import static
 from ride.views.search_ride_view import SearchRideView, join_ride
 from ride.views.authetication_view import authView
 
