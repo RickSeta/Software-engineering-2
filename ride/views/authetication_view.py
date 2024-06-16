@@ -13,7 +13,7 @@ def authView(request):
             profile = UserProfile(user=user)
             profile.save()
             messages.success(request, "Criou conta com sucesso!")
-            return redirect("ride:login")
+            return redirect("login")
     else:
         form = SignupForm()
     return render(request, "registration/signup.html", {"form" : form})

@@ -5,6 +5,7 @@ from ride import urls as ride_urls
 
 
 urlpatterns = [
+    path('', include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
     path('', include((ride_urls, 'ride'), 'ride')),
 ]

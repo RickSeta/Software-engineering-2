@@ -7,10 +7,11 @@ from django.contrib import messages
 import json
 from ride.views.profile_view import User
 from ..models import Ride, RideRequest, Place, Location, UserProfile
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 
-class SearchRideView(TemplateView):
+class SearchRideView(LoginRequiredMixin, TemplateView):
     template_name = 'search_ride.html'
 
     def get(self, request):

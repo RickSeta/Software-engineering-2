@@ -3,11 +3,10 @@ from django.views.generic import FormView
 from ride.forms.ride_form import RideForm
 from ride.models import UserProfile
 from ride.use_cases import CreateRideUseCase
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-
-
-class CreateRideView(FormView):
+class CreateRideView(LoginRequiredMixin, FormView):
     template_name = 'create_ride.html'
     form_class = RideForm
     use_case = CreateRideUseCase()

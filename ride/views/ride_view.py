@@ -2,9 +2,10 @@ from django.views.generic import DetailView
 
 from ride.repositories import RideRepository
 from ride.serializers.ride_serializer import RideSerializer
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class RideView(DetailView):
+class RideView(LoginRequiredMixin, DetailView):
     repository = RideRepository()
     template_name = 'ride_detail.html'
     context_object_name = 'ride'
