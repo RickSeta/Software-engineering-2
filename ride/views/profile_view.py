@@ -13,8 +13,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
     def get(self, request):
-        user = request.user
-        user_profile = UserProfile.objects.get(user=user)
+        user_profile = UserProfile.objects.get(user=request.user)
         form = UserProfileForm(instance=user_profile)
         
         context = {
@@ -25,8 +24,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
 
     def post(self, request):
-        user = User.objects.get(username='henri')
-        user_profile = UserProfile.objects.get(user=user)
+        user_profile = UserProfile.objects.get(user=request.user)
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         
         if form.is_valid():
