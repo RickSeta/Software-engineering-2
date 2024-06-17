@@ -25,32 +25,15 @@
               {% endif %}
             </div>
             <h4 class="mb-2">{{ profile.user }}</h4>
-            <p class="text-muted">{{ profile.degree }}</p>
-            <button type="button" class="btn btn-outline-primary btn-rounded btn-lg" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+            {% if profile.degree %}
+              <p class="text-muted">{{ profile.degree }}</p>
+            {% endif %}
+            {% if can_edit %}
+            <a href="{% url 'ride:edit_profile' %}" class="btn btn-outline-primary btn-rounded btn-lg">
               Editar Perfil
-            </button>
+            </a>
+            {% endif %}
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editProfileModalLabel">Editar Perfil</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-primary">Salvar mudanças</button>
-            </div>
-          </form>
         </div>
       </div>
     </div>

@@ -12,25 +12,10 @@ User = get_user_model()
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
-    def get(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        form = UserProfileForm(instance=user_profile)
-        context = {
-            'profile': user_profile,
-            'form': form,
-        }
-        return render(request, self.template_name, context)
-
-
-    def post(self, request):
-        user_profile = UserProfile.objects.get(user=request.user)
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        
-        if form.is_valid():
-            form.save()
-        
-        context = {
-            'profile': user_profile,
-            'form': form,
-        }
-        return render(request, self.template_name, context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_profile = UserProfile.objects.get(user_id=kwargs.get('user_id'))
+        if self.request.user.id == user_profile.user_id:
+            context['can_edit'] = True
+        context['profile'] = user_profile
+        return context
