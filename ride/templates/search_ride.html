@@ -5,44 +5,40 @@
 {% block content %}
 <div class="container justify-content-center align-items-center vh-100">
   <div class="row">
-    <h1 class="text-center mt-5">CARONAS DISPONÍVEIS</h1>
+    <h1 class="text-center mt-4 mb-0">CARONAS DISPONÍVEIS</h1>
   </div>
   <hr class="my-5">
   <div class="row mb-5">
     <div class="col-12">
-      <div class="card shadow" style="border-radius: 15px; width: 40%; margin: auto;">
-        <div class="card-body text-center">
+      <div class="card shadow" style="border-radius: 15px; margin: auto;">
+        <div class="card-body" style="padding: 36px;">
           <form id="search-ride-form">
             {% csrf_token %}
             <div class="mb-4 input-group">
-              <label for="starting_point" class="form-label w-100 text-start">Local de Partida:</label>
+              <label for="starting_point" class="form-label w-100 text-start">Local de Partida</label>
               <input type="text" class="form-control" id="starting_point" name="starting_point" required>
               <input type="hidden" id="starting_point_coords" name="starting_point_coords">
-              <button type="button" class="btn btn-outline-secondary" id="starting_point_map_btn">
-                <i class="fas fa-map-marker-alt"></i>
-              </button>
             </div>
             <div class="mb-4 input-group">
-              <label for="destination" class="form-label w-100 text-start">Destino:</label>
+              <label for="destination" class="form-label w-100 text-start">Destino</label>
               <input type="text" class="form-control" id="destination" name="destination" required>
               <input type="hidden" id="destination_coords" name="destination_coords">
-              <button type="button" class="btn btn-outline-secondary" id="destination_map_btn">
-                <i class="fas fa-map-marker-alt"></i>
-              </button>
             </div>
             <div class="row mb-4">
               <div class="col-6">
-                <label for="starting_hour" class="form-label">Data e Hora:</label>
+                <label for="starting_hour" class="form-label">Data e Hora</label>
                 <input type="datetime-local" class="form-control" id="starting_hour" name="starting_hour" required>
               </div>
               <div class="col-6">
-                <label for="passengers" class="form-label">Quantidade de Passageiros:</label>
+                <label for="passengers" class="form-label">Quantidade de Passageiros</label>
                 <input type="number" class="form-control" id="passengers" name="passengers" required>
               </div>
             </div>
-            <button type="submit" class="btn btn-outline-dark btn-rounded btn-lg">Buscar</button>
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn btn-outline-dark btn-rounded btn-lg">Buscar</button>
+            </div>
           </form>
-          <div id="solicitacao" class="mt-4"></div>
+          <div id="solicitacao"></div>
         </div>
       </div>
     </div>
