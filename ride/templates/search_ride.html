@@ -245,7 +245,7 @@
         updateRides(data.rides);
       } else {
         const solicitacao = document.getElementById('solicitacao');
-        solicitacao.innerHTML = '<div class="alert alert-warning" role="alert">Não encontramos sua carona, porém uma solicitação foi criada com sucesso. Assim que ela for atendida, você será notificado.</div>';
+        solicitacao.innerHTML = '<div class="alert alert-warning mt-3" role="alert">Não encontramos sua carona, porém uma solicitação foi criada com sucesso. Assim que ela for atendida, você será notificado.</div>';
       }
     })
     .catch((error) => {

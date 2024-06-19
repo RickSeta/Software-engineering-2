@@ -5,51 +5,77 @@
 
 {% block content %}
 
-<div class="container">
-  <h2>Carona</h2>
-  <hr/>
-
+<div class="container justify-content-center align-items-center vh-100">
   <div class="row">
-    <div class="col-sm-12">
-      <b>Motorista:</b> {{ ride.driver.name }}
-    </div>
-    <div class="col-sm-6">
-      <b>Carro:</b> {{ ride.car.model }}
-    </div>
-    <div class="col-sm-6">
-      <b>Placa:</b> {{ ride.car.plate }}
-    </div>
-    <div class="col-sm-12">
-      <b>Ponto de partida:</b> {{ ride.starting_point.address }}
-    </div>
-    <div class="col-sm-12">
-      <b>Destino:</b> {{ ride.destination.address }}
-    </div>
-    <div class="col-sm-6">
-      <b>Data e Hora:</b> {{ ride.starting_hour }}
-    </div>
-    <div class="col-sm-6">
-      <b>Tempo previsto de viagem:</b> {{ ride.estimated_travel_time }}
-    </div>
-    <div class="col-sm-6">
-      <b>Status:</b> {{ ride.status_display_name }}
-    </div>
-    <div class="col-sm-12">
-      <b>Passageiros:</b>
-      {% if ride.passengers %}
-      <ul>
-        <li>
-          {% for passenger in ride.passengers %}
-            {{ passenger.name }}
-          {% endfor %}
-      </ul>
-      {% else %}
-        Nenhum passageiro
-      {% endif %}
-    </div>
+    <h1 class="text-center mt-4 mb-0">CARONA</h1>
   </div>
-
-  <div>
+  <hr class="my-5">
+  <div class="pb-5">
+    <div class="card shadow" style="border-radius: 15px; margin: auto">
+      <div class="card-body" style="padding: 36px;">
+        <div class="row">
+          <div class="col-sm-12">
+            <h5>Detalhes da viagem</h5><hr>
+          </div>
+          <div class="col-12"><b>Nome:</b> {{ ride.driver.name }}</div>
+          <div class="col-6"><b>Carro:</b> {{ ride.car.model }} - {{ ride.car.color }}</div>
+          <div class="col-6"><b>Placa:</b> {{ ride.car.plate }}</div>
+          <div class="col-sm-6">
+            <b>Data e Hora:</b> {{ ride.starting_hour }}
+          </div>
+          <div class="col-sm-6">
+            <b>Tempo previsto de viagem:</b> {{ ride.estimated_travel_time }}
+          </div>
+          <div class="col-sm-6">
+            <b>Status da corrida:</b> {{ ride.status_display_name }}
+          </div>
+        </div>
+        <div class="col-sm-12 mt-5">
+          <h5>Passageiros</h5><hr>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            {% if ride.passengers %}
+            <ul>
+              <li>
+                {% for passenger in ride.passengers %}
+                  {{ passenger.username }}
+                {% endfor %}
+              </li>
+            </ul>
+            {% else %}
+              Nenhum passageiro
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-sm-12 mt-5">
+          <h5>Local de partida</h5><hr>
+          <iframe
+            width="100%"
+            height="200"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}
+              &q={{ ride.starting_point.address }}&zoom=15">
+          </iframe>
+        </div>
+        <div class="col-sm-12 mt-5">
+          <h5>Destino</h5><hr>
+          <iframe
+            width="100%"
+            height="200"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}
+              &q={{ ride.destination.address }}&zoom=15">
+          </iframe>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
