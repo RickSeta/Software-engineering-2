@@ -114,7 +114,7 @@
       geocoder.geocode({ 'location': pos }, function (results, status) {
         if (status === 'OK' && results[0]) {
           input.value = results[0].formatted_address;
-          document.getElementById('city2').value = results[0].address_components[0].long_name;
+          document.getElementById('starting-point-address').value = results[0].address_components[0].long_name;
         }
       });
     });
@@ -157,7 +157,7 @@
       geocoder.geocode({ 'location': pos }, function (results, status) {
         if (status === 'OK' && results[0]) {
           input.value = results[0].formatted_address;
-          document.getElementById('city2').value = results[0].address_components[0].long_name;
+          document.getElementById('destination-address').value = results[0].address_components[0].long_name;
         }
       });
     });

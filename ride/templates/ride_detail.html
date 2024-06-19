@@ -17,7 +17,7 @@
           <div class="col-sm-12">
             <h5>Detalhes da viagem</h5><hr>
           </div>
-          <div class="col-12"><b>Nome:</b> {{ ride.driver.name }}</div>
+          <div class="col-12"><b>Nome:</b> {{ ride.driver.username }} {% if not is_driver %}<a href="{% url 'ride:profile' ride.driver.id %}">Ver perfil</a></div>{% endif %}
           <div class="col-6"><b>Carro:</b> {{ ride.car.model }} - {{ ride.car.color }}</div>
           <div class="col-6"><b>Placa:</b> {{ ride.car.plate }}</div>
           <div class="col-sm-6">
@@ -31,15 +31,25 @@
           </div>
         </div>
         <div class="col-sm-12 mt-5">
-          <h5>Passageiros</h5><hr>
+          <div class="d-flex flex-row justify-content-between">
+            <h5 class="align-self-end">Passageiros</h5>
+            {% if not is_driver %}
+              {% if is_passenger %}
+                <a href="{% url 'ride:leave_ride' ride.id %}" class="btn btn-danger btn-md" style="width: 100px">Sair</a>
+              {% else %}
+                <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-md" style="width: 100px">Entrar</a>
+              {% endif %}
+            {% endif %}
+          </div>
+          <hr>
         </div>
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-sm-12 mb-3">
             {% if ride.passengers %}
             <ul>
               <li>
                 {% for passenger in ride.passengers %}
-                  {{ passenger.username }}
+                  {{ passenger.username }} {% if not passenger.id == request.user.userprofile.id %}<a href="{% url 'ride:profile' passenger.id %}">Ver perfil</a>{% endif %}
                 {% endfor %}
               </li>
             </ul>

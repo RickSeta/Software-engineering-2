@@ -14,3 +14,14 @@ class RideView(LoginRequiredMixin, GoogleMapsAPIMixin, DetailView):
 
     def get_object(self):
         return self.repository.get_by_id(self.kwargs['ride_id'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_driver'] = self.request.user.userprofile.id == context['ride'].driver.id
+        is_passenger = False
+        for passenger in context['ride'].passengers:
+            if passenger.id == self.request.user.userprofile.id:
+                is_passenger = True
+                break
+        context['is_passenger'] = is_passenger
+        return context

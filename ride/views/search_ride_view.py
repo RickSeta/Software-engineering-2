@@ -99,7 +99,7 @@ def join_ride(request, ride_id):
         messages.success(request, 'Entrou na carona de {} com sucesso!'.format(ride.car.owner.user.username))
     except Exception as e:
         messages.error(request, 'Erro ao entrar na carona: {}'.format(e))
-    return redirect('ride:search_ride')
+    return redirect(request.META.get('HTTP_REFERER', 'ride:search_ride'))
 
 @login_required
 def leave_ride(request, ride_id):
@@ -112,4 +112,4 @@ def leave_ride(request, ride_id):
         messages.success(request, 'Saiu da carona de {} com sucesso!'.format(ride.car.owner.user.username))
     except Exception as e:
         messages.error(request, 'Erro ao sair da carona: {}'.format(e))
-    return redirect('ride:search_ride')
+    return redirect(request.META.get('HTTP_REFERER', 'ride:search_ride'))
