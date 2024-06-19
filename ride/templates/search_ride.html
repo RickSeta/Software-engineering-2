@@ -59,8 +59,11 @@
       <div class="card mt-4">
         <div class="card-header fw-bold">
           <a href="{% url 'ride:profile' ride.car.owner.user.id %}" style="color: black;">
-            {{ ride.car.owner }} - {{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>
+            {{ ride.car.owner }} {% if ride.car.owner.rating %}{{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>{% else %}
+              <div class="badge" style="background-color: #007bff; margin-left: 6px;">Primeira viagem</div>
+            {% endif %}
           </a>
+
         </div>
         <div class="card-body">
           <div class="row">
@@ -69,18 +72,19 @@
               <p class="card-text"><strong>Cor:</strong> {{ ride.car.color }}</p>
             </div>
             <div class="col-3">
-              <p class="card-text"><strong>Partida:</strong> {{ ride.starting_point|to_place }}</p>
-              <p class="card-text"><strong>Destino:</strong> {{ ride.destination|to_place }}</p>
+              <p class="card-text"><strong>Partida:</strong> {{ ride.starting_point.address }}</p>
+              <p class="card-text"><strong>Destino:</strong> {{ ride.destination.address }}</p>
             </div>
             <div class="col-3">
               <p class="card-text"><strong>Horário:</strong> {{ ride.starting_hour }}</p>
               <p class="card-text"><strong>Assentos Disponíveis:</strong> {{ ride.available_seats }}</p>
             </div>
-            <div class="col-3 my-auto pe-auto">
+            <div class="col-3 my-auto d-flex flex-row justify-content-end gap-2">
+              <a href="{% url 'ride:ride_detail' ride.id %}" class="btn btn-primary btn-md">Detalhes</a>
               {% if request.user.userprofile in ride.passengers.all %}
-                  <button class="btn btn-secondary btn-lg" disabled>Já entrou</button>
+                  <button class="btn btn-secondary btn-md" disabled>Já entrou</button>
               {% else %}
-                  <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-lg">Entrar</a>
+                  <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-md">Entrar</a>
               {% endif %}
             </div>
           </div>

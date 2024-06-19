@@ -8,6 +8,7 @@ import json
 from ride.views.profile_view import User
 from ..models import Ride, RideRequest, Place, Location, UserProfile
 from django.contrib.auth.mixins import LoginRequiredMixin
+from ride.constants import RideStatus
 
 
 
@@ -15,9 +16,13 @@ class SearchRideView(LoginRequiredMixin, TemplateView):
     template_name = 'search_ride.html'
 
     def get(self, request):
-        places = Place.objects.all()
-        rides = Ride.objects.filter(available_seats__gte=1, starting_hour__gte=timezone.now())
-        return render(request, self.template_name, {'places': places, 'rides': rides})
+        # places = Place.objects.all()
+        rides = Ride.objects.filter(available_seats__gte=1, starting_hour__gte=timezone.now(), status=RideStatus.SCHEDULED.value).exclude(car__owner=request.user.userprofile)
+        context = {
+            'rides': rides
+        }
+        return render(request, self.template_name, {'rides': rides})
+
 
     def post(self, request):
         try:
