@@ -23,6 +23,18 @@
         justify-content: flex-end;
       }
 
+      .gradient-custom {
+        background: #f6d365;
+        background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+        background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
+      }
+
+      .orange-border {
+        border: 2px solid #FFC084;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
       @media (min-width: 768px) {
         .custom-nav {
           padding: 1rem 2rem;
@@ -57,26 +69,26 @@
   </head>
 <body>
   {% if user.is_authenticated %}
-    <nav class="w-100 custom-nav">
+    <nav class="w-100 custom-nav gradient-custom">
       <div>
-        <a href="{% url 'ride:search_ride' %}">
+        <a href="{% url 'ride:search_ride' %}" class="btn btn-outline-dark" style="border: 0;">
           <i class="bi bi-view-list"></i> <span>Caronas</span>
         </a>
         {% comment %} <a href="{% url 'ride:search_ride' %}">
           <i class="bi bi-search"></i> <span>Buscar</span>
         </a> {% endcomment %}
-        <a href="{% url 'ride:create_ride' %}">
+        <a href="{% url 'ride:create_ride' %}" class="btn btn-outline-dark" style="border: 0;">
           <i class="bi bi-plus"></i> <span>Criar</span>
         </a>
-        <a href="{% url 'ride:profile' user.id %}">
+        <a href="{% url 'ride:profile' user.id %}" class="btn btn-outline-dark" style="border: 0;">
           <i class="bi bi-person-fill"></i> <span>Perfil</span>
         </a>
-        <a href="{% url 'logout' %}">
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger" style="border: 0;">
           <i class="bi bi-box-arrow-right"></i> <span>Sair</span>
         </a>
       </div>
     </nav>
-    {% endif %}
+  {% endif %}
 
     <main class="p-3">
         {% block content %}{% endblock %}

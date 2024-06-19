@@ -7,6 +7,7 @@ from ride.views.ride_view import RideView
 from ride.views.search_ride_view import SearchRideView, join_ride
 from ride.views.authetication_view import authView
 from ride.views.edit_profile_view import EditProfileView
+from ride.views.add_car_view import add_car
 
 app_name = 'ride'
 
@@ -19,4 +20,5 @@ urlpatterns = [
     path('carona/<int:ride_id>/', RideView.as_view(), name='ride_detail'),
     path('join_ride/<int:ride_id>/', join_ride, name='join_ride'),
     path('signup/', authView, name='signup'),
+    path('perfil/addcar', add_car, name='add_car'),
 ]

@@ -13,6 +13,10 @@ class UserProfile(models.Model):
     degree = models.CharField(max_length=255, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
+    def get_driver_ride_count(self):
+        ride_count = Ride.objects.filter(car__owner=self, status=RideStatus.COMPLETED).count()
+        return ride_count
+
     def __str__(self):
         return self.user.username
 
@@ -28,8 +32,8 @@ class Location(models.Model):
 
 
 class Car(models.Model):
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='cars')
+    name = models.CharField(max_length=100, blank=True, null=True)
     model = models.CharField(max_length=100)
     year = models.IntegerField()
     color = models.CharField(max_length=100)
@@ -38,7 +42,7 @@ class Car(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.model} - {self.plate}"
+        return f"{self.model} - {self.color}"
 
 
 class Ride(models.Model):
