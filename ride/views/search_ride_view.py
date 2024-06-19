@@ -9,20 +9,19 @@ from ride.views.profile_view import User
 from ..models import Ride, RideRequest, Place, Location, UserProfile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ride.constants import RideStatus
+from ride.mixins.google_maps_api_mixin import GoogleMapsAPIMixin
 
 
 
-class SearchRideView(LoginRequiredMixin, TemplateView):
+class SearchRideView(LoginRequiredMixin, GoogleMapsAPIMixin, TemplateView):
     template_name = 'search_ride.html'
 
-    def get(self, request):
+    def get(self, request, **kwargs):
+        context = super().get_context_data(**kwargs)
         # places = Place.objects.all()
         rides = Ride.objects.filter(available_seats__gte=1, starting_hour__gte=timezone.now(), status=RideStatus.SCHEDULED.value).exclude(car__owner=request.user.userprofile)
-        context = {
-            'rides': rides
-        }
-        return render(request, self.template_name, {'rides': rides})
-
+        context['rides'] = rides
+        return render(request, self.template_name, context)
 
     def post(self, request):
         try:

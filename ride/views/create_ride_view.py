@@ -4,9 +4,10 @@ from ride.forms.ride_form import RideForm
 from ride.models import UserProfile
 from ride.use_cases import CreateRideUseCase
 from django.contrib.auth.mixins import LoginRequiredMixin
+from ride.mixins.google_maps_api_mixin import GoogleMapsAPIMixin
 
 
-class CreateRideView(LoginRequiredMixin, FormView):
+class CreateRideView(LoginRequiredMixin, GoogleMapsAPIMixin, FormView):
     template_name = 'create_ride.html'
     form_class = RideForm
     use_case = CreateRideUseCase()
