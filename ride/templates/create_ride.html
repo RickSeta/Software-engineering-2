@@ -10,56 +10,66 @@
 
 {% block content %}
 
-<div class="container">
-  <h2>Criar carona</h2>
-  <hr/>
-  <form method='post'>
-    {% csrf_token %}
-    <div class="d-flex flex-column">
-      <div class="form-group mb-3">
-        {% if form.car.help_text %}
-        <div class="alert alert-warning" role="alert">
-          <b>Atenção</b><br>
-          {{ form.car.help_text }}
-        </div>
-        {% else %}
-          <label for="id_car">Carro</label>
-          {{ form.car }}
-        {% endif %}
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label for="id_available_seats">Assentos disponíveis</label>
-            {{ form.available_seats }}
+<div class="container justify-content-center align-items-center vh-100">
+  <div class="row">
+    <h1 class="text-center mt-4 mb-0">CRIAR CARONA</h1>
+  </div>
+  <hr class="my-5">
+  <div class="pb-5">
+    <div class="card shadow" style="border-radius: 15px; margin: auto">
+      <div class="card-body" style="padding: 36px;">
+        <form method='post'>
+          {% csrf_token %}
+          <div class="d-flex flex-column">
+            <div class="form-group mb-3">
+              {% if form.car.help_text %}
+              <div class="alert alert-warning" role="alert">
+                <b>Atenção</b><br>
+                {{ form.car.help_text }}
+              </div>
+              {% else %}
+                <label for="id_car">Carro</label>
+                {{ form.car }}
+              {% endif %}
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="id_available_seats">Assentos disponíveis</label>
+                  {{ form.available_seats }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="id_available_seats">Horário</label>
+                  {{ form.starting_hour }}
+                </div>
+              </div>
+            </div>
+            <div class="form-group mb-3">
+              <label for="search-starting-point-field">Ponto de partida</label>
+              <input id="search-starting-point-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+              <input hidden name="starting_point_address" id="starting-point-address" />
+              <input hidden name="starting_point_latitude" id="starting-point-latitude" />
+              <input hidden name="starting_point_longitude" id="starting-point-longitude" />
+              <div class="map" id="starting-point-map"></div>
+            </div>
+            <div class="form-group mb-3">
+              <label>Destino</label>
+              <input id="search-destination-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+              <input hidden name="destination_address" id="destination-address" />
+              <input hidden name="destination_latitude" id="destination-latitude" />
+              <input hidden name="destination_longitude" id="destination-longitude" />
+              <div class="map" id="destination-map"></div>
+            </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label for="id_available_seats">Horário</label>
-            {{ form.starting_hour }}
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="mt-3 btn btn-outline-dark btn-rounded btn-lg">Criar</button>
           </div>
-        </div>
+        </form>
       </div>
-      <div class="form-group mb-3">
-        <label for="search-starting-point-field">Ponto de partida</label>
-        <input id="search-starting-point-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
-        <input hidden name="starting_point_address" id="starting-point-address" />
-        <input hidden name="starting_point_latitude" id="starting-point-latitude" />
-        <input hidden name="starting_point_longitude" id="starting-point-longitude" />
-        <div class="map" id="starting-point-map"></div>
-      </div>
-      <div class="form-group mb-3">
-        <label>Destino</label>
-        <input id="search-destination-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
-        <input hidden name="destination_address" id="destination-address" />
-        <input hidden name="destination_latitude" id="destination-latitude" />
-        <input hidden name="destination_longitude" id="destination-longitude" />
-        <div class="map" id="destination-map"></div>
-      </div>
-      <button class="btn btn-dark align-self-end" type="submit">Confirmar</button>
     </div>
-  </form>
+  </div>
 </div>
 
 {% endblock %}
