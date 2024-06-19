@@ -92,7 +92,7 @@
             <div class="col-3 my-auto d-flex flex-row justify-content-end gap-2">
               <a href="{% url 'ride:ride_detail' ride.id %}" class="btn btn-primary btn-md">Detalhes</a>
               {% if request.user.userprofile in ride.passengers.all %}
-                  <button class="btn btn-secondary btn-md" disabled>Já entrou</button>
+                  <a href="{% url 'ride:leave_ride' ride.id %}" class="btn btn-danger btn-md">Sair</a>
               {% else %}
                   <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-md">Entrar</a>
               {% endif %}

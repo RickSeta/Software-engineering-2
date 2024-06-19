@@ -96,7 +96,20 @@ def join_ride(request, ride_id):
         ride.passengers.add(user_profile)
         ride.available_seats -= 1
         ride.save()
-        messages.success(request, 'Entrou na carona do {} com sucesso!'.format(ride.car.owner.user.username))
+        messages.success(request, 'Entrou na carona de {} com sucesso!'.format(ride.car.owner.user.username))
     except Exception as e:
         messages.error(request, 'Erro ao entrar na carona: {}'.format(e))
+    return redirect('ride:search_ride')
+
+@login_required
+def leave_ride(request, ride_id):
+    try:
+        ride = get_object_or_404(Ride, id=ride_id)
+        user_profile = UserProfile.objects.get(user=request.user)
+        ride.passengers.remove(user_profile)
+        ride.available_seats += 1
+        ride.save()
+        messages.success(request, 'Saiu da carona de {} com sucesso!'.format(ride.car.owner.user.username))
+    except Exception as e:
+        messages.error(request, 'Erro ao sair da carona: {}'.format(e))
     return redirect('ride:search_ride')
