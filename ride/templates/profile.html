@@ -43,10 +43,12 @@
                     <h6>Nº de Caronas</h6>
                     <p class="text-muted">{{ n_rides }}</p>
                   </div>
-                  <div class="col-6 mb-3">
-                    <h6>Curso</h6>
-                    <p class="text-muted">{{ profile.degree }}</p>
-                  </div>
+                  {% if profile.degree %}
+                    <div class="col-6 mb-3">
+                      <h6>Curso</h6>
+                      <p class="text-muted">{{ profile.degree }}</p>
+                    </div>
+                  {% endif %}
                 </div>
                 {% if can_edit %}
                 <h6 class="d-flex justify-content-between">

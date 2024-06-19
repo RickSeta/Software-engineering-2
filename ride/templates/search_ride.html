@@ -58,7 +58,9 @@
     {% for ride in rides %}
       <div class="card mt-4">
         <div class="card-header fw-bold">
-          {{ ride.car.owner }} - {{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>
+          <a href="{% url 'ride:profile' ride.car.owner.user.id %}" style="color: black;">
+            {{ ride.car.owner }} - {{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>
+          </a>
         </div>
         <div class="card-body">
           <div class="row">
