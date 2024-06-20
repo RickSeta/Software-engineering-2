@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ride.forms.user_profile_form import UserProfileForm
 from ride.forms.car_form import CarForm
+from ride.models import Ride
 
 
 User = get_user_model()
@@ -21,7 +22,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
             context['can_edit'] = True
         
         context['profile'] = user_profile
-        context['n_rides'] = user_profile.get_driver_ride_count()
+        context['n_rides'] = Ride.objects.filter(car__owner=user_profile).count()
         context['cars'] = user_profile.cars.all()
         context['car_form'] = CarForm()
 

@@ -13,10 +13,6 @@ class UserProfile(models.Model):
     degree = models.CharField(max_length=255, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
-    def get_driver_ride_count(self):
-        ride_count = Ride.objects.filter(car__owner=self, status=RideStatus.COMPLETED).count()
-        return ride_count
-
     def __str__(self):
         return self.user.username
 
