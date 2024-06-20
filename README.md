@@ -7,7 +7,9 @@
 
 ## Passo 1: Configurar Ambiente Virtual
 Com o terminal aberto no diretório do projeto:
-- Para criar o ambiente virtual, rode o comando:
+- Para criar o ambiente virtual, execute o comando: `python -m venv env`
+
+- Para ativar o ambiente virtual, execute:
 
   No windows: `.\env\Scripts\activate`
 
