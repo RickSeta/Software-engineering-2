@@ -3,13 +3,14 @@ from django.urls import path, include
 from ride.views.index_view import IndexView
 from ride.views.create_ride_view import CreateRideView
 from ride.views.profile_view import ProfileView
-from ride.views.ride_view import RideView
+from ride.views.ride_view import RideView, cancel_ride, start_ride
 from ride.views.search_ride_view import SearchRideView, join_ride, leave_ride
 from ride.views.authetication_view import authView
 from ride.views.edit_profile_view import EditProfileView
 from ride.views.add_car_view import add_car
 from ride.views.my_rides_view import MyRidesView
 from ride.views.rides_history_view import RidesHistoryView
+
 
 app_name = 'ride'
 
@@ -26,4 +27,6 @@ urlpatterns = [
     path('perfil/addcar', add_car, name='add_car'),
     path('minhas-caronas/', MyRidesView.as_view(), name='my_rides'),
     path('historico/', RidesHistoryView.as_view(), name='rides_history'),
+    path('cancel_ride/<int:ride_id>/', cancel_ride, name='cancel_ride'),
+    path('start_ride/<int:ride_id>/', start_ride, name='start_ride'),
 ]

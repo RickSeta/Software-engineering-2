@@ -1,9 +1,15 @@
 from django.views.generic import DetailView
 
 from ride.repositories import RideRepository
+from datetime import datetime
 from ride.serializers.ride_serializer import RideSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ride.mixins.google_maps_api_mixin import GoogleMapsAPIMixin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from ride.constants import RideStatus
+from django.contrib import messages
+from ride.models import Ride
 
 
 class RideView(LoginRequiredMixin, GoogleMapsAPIMixin, DetailView):
@@ -25,3 +31,25 @@ class RideView(LoginRequiredMixin, GoogleMapsAPIMixin, DetailView):
                 break
         context['is_passenger'] = is_passenger
         return context
+
+@login_required
+def cancel_ride(request, ride_id):
+    try:
+        ride = get_object_or_404(Ride, id=ride_id)
+        ride.status = RideStatus.CANCELLED.value
+        ride.canceled_at = datetime.now()
+        ride.save()
+    except Exception as e:
+        messages.error(request, 'Erro ao cancelar carona: {}'.format(e))
+    return redirect('ride:my_rides')
+
+@login_required
+def start_ride(request, ride_id):
+    try:
+        ride = get_object_or_404(Ride, id=ride_id)
+        ride.status = RideStatus.IN_PROGRESS.value
+        ride.started_at = datetime.now()
+        ride.save()
+    except Exception as e:
+        messages.error(request, 'Erro ao iniciar carona: {}'.format(e))
+    return redirect(request.META.get('HTTP_REFERER', 'ride:search_ride'))
