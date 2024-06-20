@@ -42,7 +42,7 @@
         </div>
         <div class="col-sm-12 mt-5">
           <div class="d-flex flex-row justify-content-between">
-            <h5 class="align-self-end">Passageiros</h5>
+            <div class="d-flex flex-row gap-2"><h5 class="align-self-end">Passageiros</h5><small class="text-muted align-self-center">{{ ride.available_seats }} assento(s) disponíveis</small></div>
             {% if not is_driver %}
               {% if is_passenger and is_scheduled %}
                 <a href="{% url 'ride:leave_ride' ride.id %}" class="btn btn-danger btn-md" style="width: 100px">Sair</a>
