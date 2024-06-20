@@ -76,11 +76,11 @@
     <nav class="w-100 custom-nav gradient-custom">
       <div>
         <a href="{% url 'ride:search_ride' %}" class="btn btn-outline-dark" style="border: 0;">
-          <i class="bi bi-view-list"></i> <span>Caronas</span>
+          <i class="bi bi-view-list"></i> <span>Buscar caronas</span>
         </a>
-        {% comment %} <a href="{% url 'ride:search_ride' %}">
-          <i class="bi bi-search"></i> <span>Buscar</span>
-        </a> {% endcomment %}
+        <a href="{% url 'ride:my_rides' %}" class="btn btn-outline-dark" style="border: 0;">
+          <i class="bi bi-car-front-fill"></i> <span>Minhas caronas</span>
+        </a>
         <a href="{% url 'ride:create_ride' %}" class="btn btn-outline-dark" style="border: 0;">
           <i class="bi bi-plus"></i> <span>Criar</span>
         </a>

@@ -8,6 +8,7 @@ from ride.views.search_ride_view import SearchRideView, join_ride, leave_ride
 from ride.views.authetication_view import authView
 from ride.views.edit_profile_view import EditProfileView
 from ride.views.add_car_view import add_car
+from ride.views.my_rides_view import MyRidesView
 
 app_name = 'ride'
 
@@ -22,4 +23,5 @@ urlpatterns = [
     path('leave_ride/<int:ride_id>/', leave_ride, name='leave_ride'),
     path('signup/', authView, name='signup'),
     path('perfil/addcar', add_car, name='add_car'),
+    path('minhas-caronas/', MyRidesView.as_view(), name='my_rides'),
 ]

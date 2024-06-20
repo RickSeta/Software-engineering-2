@@ -73,12 +73,11 @@
               <div class="badge" style="background-color: #6c757d; margin-left: 6px;">Sem nota</div>
             {% endif %}
           </a>
-
         </div>
         <div class="card-body">
           <div class="row">
             <div class="col-3">
-              <p class="card-text"><strong>Carro:</strong> {{ ride.car }}</p>
+              <p class="card-text"><strong>Carro:</strong> {{ ride.car.model }}</p>
               <p class="card-text"><strong>Cor:</strong> {{ ride.car.color }}</p>
             </div>
             <div class="col-3">
