@@ -17,7 +17,7 @@
           <div class="col-sm-12">
             <h5>Detalhes da viagem</h5><hr>
           </div>
-          <div class="col-12"><b>Nome:</b> {{ ride.driver.username }} {% if not is_driver %}<a href="{% url 'ride:profile' ride.driver.id %}">Ver perfil</a></div>{% endif %}
+          <div class="col-12"><b>Motorista:</b> {{ ride.driver.username }} {% if not is_driver %}<a href="{% url 'ride:profile' ride.driver.id %}">Ver perfil</a></div>{% endif %}
           <div class="col-6"><b>Carro:</b> {{ ride.car.model }} - {{ ride.car.color }}</div>
           <div class="col-6"><b>Placa:</b> {{ ride.car.plate }}</div>
           <div class="col-sm-6">
