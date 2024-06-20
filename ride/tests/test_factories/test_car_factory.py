@@ -11,7 +11,7 @@ class CarFactoryTestCase(TestCase):
         self.factory = CarFactory()
         self.model = Mock()
 
-    def test_car_factory(self):
+    def test_create_from_model(self):
         car = self.factory.create_from_model(self.model)
         self.assertEqual(car.id, self.model.id)
         self.assertEqual(car.model, self.model.model)

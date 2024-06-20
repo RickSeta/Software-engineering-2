@@ -11,7 +11,7 @@ class RideFactoryTestCase(TestCase):
         self.factory = RideFactory()
         self.model = Mock()
 
-    def test_car_factory(self):
+    def test_create_from_model(self):
         ride = self.factory.create_from_model(self.model)
         ride.status = self.model.status
         ride.status_display_name = self.model.status_display_name

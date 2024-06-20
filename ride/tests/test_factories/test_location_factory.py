@@ -11,7 +11,7 @@ class LocationFactoryTestCase(TestCase):
         self.factory = LocationFactory()
         self.model = Mock()
 
-    def test_location_factory(self):
+    def test_create_from_model(self):
         location = self.factory.create_from_model(self.model)
         self.assertEqual(location.id, self.model.id)
         self.assertEqual(location.latitude, self.model.latitude)
