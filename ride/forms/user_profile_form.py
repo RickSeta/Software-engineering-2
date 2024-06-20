@@ -5,9 +5,12 @@ from ride.models import UserProfile
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['course', 'car', 'profile_picture']
+        fields = ['profile_picture', 'degree']
+        labels = {
+            'degree': 'Curso',
+            'profile_picture': 'Foto de Perfil',
+        }
         widgets = {
-            'course': forms.TextInput(attrs={'class': 'form-control'}),
-            'car': forms.TextInput(attrs={'class': 'form-control'}),
+            'degree': forms.TextInput(attrs={'class': 'form-control'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }

@@ -2,38 +2,28 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 from ride.models import UserProfile
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ride.forms.user_profile_form import UserProfileForm
+from ride.forms.car_form import CarForm
+from ride.models import Ride
 
 
 User = get_user_model()
 
-
-class ProfileView(TemplateView):
+class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
-    def get(self, request):
-        user = request.user
-        user_profile = UserProfile.objects.get(user=user)
-        form = UserProfileForm(instance=user_profile)
-        
-        context = {
-            'profile': user_profile,
-            'form': form,
-        }
-        return render(request, self.template_name, context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_profile = UserProfile.objects.get(user_id=kwargs.get('user_id'))
 
+        if self.request.user.id == user_profile.user_id:
+            context['can_edit'] = True
+        
+        context['profile'] = user_profile
+        context['n_rides'] = Ride.objects.filter(car__owner=user_profile).count()
+        context['cars'] = user_profile.cars.all()
+        context['car_form'] = CarForm()
 
-    def post(self, request):
-        user = User.objects.get(username='henri')
-        user_profile = UserProfile.objects.get(user=user)
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        
-        if form.is_valid():
-            form.save()
-        
-        context = {
-            'profile': user_profile,
-            'form': form,
-        }
-        return render(request, self.template_name, context)
+        return context

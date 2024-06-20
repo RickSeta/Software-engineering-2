@@ -2,47 +2,57 @@
 {% load static %}
 {% load tags %}
 
+{% block custom_css %}
+  <style>
+    .map {
+      height: 180px;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
 <div class="container justify-content-center align-items-center vh-100">
   <div class="row">
-    <h1 class="text-center mt-5">CARONAS DISPONÍVEIS</h1>
+    <h1 class="text-center mt-4 mb-0">BUSCAR CARONAS</h1>
   </div>
   <hr class="my-5">
   <div class="row mb-5">
     <div class="col-12">
-      <div class="card shadow" style="border-radius: 15px; width: 40%; margin: auto;">
-        <div class="card-body text-center">
+      <div class="card shadow" style="border-radius: 15px; margin: auto;">
+        <div class="card-body" style="padding: 36px;">
           <form id="search-ride-form">
             {% csrf_token %}
-            <div class="mb-4 input-group">
-              <label for="starting_point" class="form-label w-100 text-start">Local de Partida:</label>
-              <input type="text" class="form-control" id="starting_point" name="starting_point" required>
-              <input type="hidden" id="starting_point_coords" name="starting_point_coords">
-              <button type="button" class="btn btn-outline-secondary" id="starting_point_map_btn">
-                <i class="fas fa-map-marker-alt"></i>
-              </button>
+            <div class="form-group mb-3">
+              <label for="search-starting-point-field">Local de partida</label>
+              <input id="search-starting-point-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+              <input hidden name="starting_point_address" id="starting-point-address" />
+              <input hidden name="starting_point_latitude" id="starting-point-latitude" />
+              <input hidden name="starting_point_longitude" id="starting-point-longitude" />
+              <div class="map" id="starting-point-map"></div>
             </div>
-            <div class="mb-4 input-group">
-              <label for="destination" class="form-label w-100 text-start">Destino:</label>
-              <input type="text" class="form-control" id="destination" name="destination" required>
-              <input type="hidden" id="destination_coords" name="destination_coords">
-              <button type="button" class="btn btn-outline-secondary" id="destination_map_btn">
-                <i class="fas fa-map-marker-alt"></i>
-              </button>
+            <div class="form-group mb-3">
+              <label>Destino</label>
+              <input id="search-destination-field" class="form-control mb-2" type="text" placeholder="Digite o endereço..." autocomplete="on" runat="server" />
+              <input hidden name="destination_address" id="destination-address" />
+              <input hidden name="destination_latitude" id="destination-latitude" />
+              <input hidden name="destination_longitude" id="destination-longitude" />
+              <div class="map" id="destination-map"></div>
             </div>
             <div class="row mb-4">
               <div class="col-6">
-                <label for="starting_hour" class="form-label">Data e Hora:</label>
+                <label for="starting_hour" class="form-label">Data e Hora</label>
                 <input type="datetime-local" class="form-control" id="starting_hour" name="starting_hour" required>
               </div>
               <div class="col-6">
-                <label for="passengers" class="form-label">Quantidade de Passageiros:</label>
-                <input type="number" class="form-control" id="passengers" name="passengers" required>
+                <label for="passengers" class="form-label">Quantidade de Passageiros</label>
+                <input type="number" class="form-control" id="passengers" name="passengers" required placeholder="Digite a quantidade de passageiros...">
               </div>
             </div>
-            <button type="submit" class="btn btn-outline-primary btn-rounded btn-lg">Buscar</button>
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn btn-outline-dark btn-rounded btn-lg">Buscar</button>
+            </div>
           </form>
-          <div id="solicitacao" class="mt-4"></div>
+          <div id="solicitacao"></div>
         </div>
       </div>
     </div>
@@ -54,31 +64,36 @@
         </div>
     {% endfor %}
   {% endif %}
-  <div id="ride-results">
+  <div id="ride-results" class="pb-5">
     {% for ride in rides %}
       <div class="card mt-4">
         <div class="card-header fw-bold">
-          {{ ride.car.owner }} - {{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>
+          <a href="{% url 'ride:profile' ride.car.owner.user.id %}" style="color: black;">
+            {{ ride.car.owner }} {% if ride.car.owner.rating %}{{ ride.car.owner.rating }} <i class="bi bi-star-fill"></i>{% else %}
+              <div class="badge" style="background-color: #6c757d; margin-left: 6px;">Sem nota</div>
+            {% endif %}
+          </a>
         </div>
         <div class="card-body">
           <div class="row">
             <div class="col-3">
-              <p class="card-text"><strong>Carro:</strong> {{ ride.car }}</p>
+              <p class="card-text"><strong>Carro:</strong> {{ ride.car.model }}</p>
               <p class="card-text"><strong>Cor:</strong> {{ ride.car.color }}</p>
             </div>
             <div class="col-3">
-              <p class="card-text"><strong>Partida:</strong> {{ ride.starting_point|to_place }}</p>
-              <p class="card-text"><strong>Destino:</strong> {{ ride.destination|to_place }}</p>
+              <p class="card-text"><strong>Partida:</strong> {{ ride.starting_point.address }}</p>
+              <p class="card-text"><strong>Destino:</strong> {{ ride.destination.address }}</p>
             </div>
             <div class="col-3">
               <p class="card-text"><strong>Horário:</strong> {{ ride.starting_hour }}</p>
               <p class="card-text"><strong>Assentos Disponíveis:</strong> {{ ride.available_seats }}</p>
             </div>
-            <div class="col-3 my-auto pe-auto">
+            <div class="col-3 my-auto d-flex flex-row justify-content-end gap-2">
+              <a href="{% url 'ride:ride_detail' ride.id %}" class="btn btn-primary btn-md">Detalhes</a>
               {% if request.user.userprofile in ride.passengers.all %}
-                  <button class="btn btn-secondary btn-lg" disabled>Já entrou</button>
+                  <a href="{% url 'ride:leave_ride' ride.id %}" class="btn btn-danger btn-md">Sair</a>
               {% else %}
-                  <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-lg">Entrar</a>
+                  <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-md">Entrar</a>
               {% endif %}
             </div>
           </div>
@@ -92,37 +107,130 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block custom_js %}
+<script src="http://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&" type="text/javascript"></script>
 <script>
+
+  function initializeStartPoint() {
+    let map = new google.maps.Map(document.getElementById("starting-point-map"), {
+        center: { lat: -22.903, lng: -43.132 },
+        zoom: 11,
+    });
+
+    let marker = new google.maps.Marker({
+        map,
+        position: { lat: -22.903, lng: -43.132 },
+        draggable: true,
+        animation: google.maps.Animation.DROP
+    });
+
+    var input = document.getElementById('search-starting-point-field');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+    google.maps.event.addListener(autocomplete, 'place_changed', function () {
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+            return;
+        }
+        map.panTo(place.geometry.location);
+        marker.setPosition(place.geometry.location);
+        document.getElementById('starting-point-address').value = place.name;
+        document.getElementById('starting-point-latitude').value = place.geometry.location.lat();
+        document.getElementById('starting-point-longitude').value = place.geometry.location.lng();
+    });
+
+    google.maps.event.addListener(marker, 'dragend', function () {
+      var pos = marker.getPosition();
+      map.panTo(pos);
+      document.getElementById('starting-point-latitude').value = pos.lat();
+      document.getElementById('starting-point-longitude').value = pos.lng();
+
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ 'location': pos }, function (results, status) {
+        if (status === 'OK' && results[0]) {
+          input.value = results[0].formatted_address;
+          document.getElementById('city2').value = results[0].address_components[0].long_name;
+        }
+      });
+    });
+  }
+
+  function initializeDestination() {
+    let map = new google.maps.Map(document.getElementById("destination-map"), {
+        center: { lat: -22.903, lng: -43.132 },
+        zoom: 11,
+    });
+
+    let marker = new google.maps.Marker({
+        map,
+        position: { lat: -22.903, lng: -43.132 },
+        draggable: true,
+        animation: google.maps.Animation.DROP
+    });
+
+    var input = document.getElementById('search-destination-field');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+    google.maps.event.addListener(autocomplete, 'place_changed', function () {
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+            return;
+        }
+        map.panTo(place.geometry.location);
+        marker.setPosition(place.geometry.location);
+        document.getElementById('destination-address').value = place.name;
+        document.getElementById('destination-latitude').value = place.geometry.location.lat();
+        document.getElementById('destination-longitude').value = place.geometry.location.lng();
+    });
+
+    google.maps.event.addListener(marker, 'dragend', function () {
+      var pos = marker.getPosition();
+      map.panTo(pos);
+      document.getElementById('destination-latitude').value = pos.lat();
+      document.getElementById('destination-longitude').value = pos.lng();
+
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ 'location': pos }, function (results, status) {
+        if (status === 'OK' && results[0]) {
+          input.value = results[0].formatted_address;
+          document.getElementById('city2').value = results[0].address_components[0].long_name;
+        }
+      });
+    });
+  }
+
+  function initialize () {
+    initializeStartPoint();
+    initializeDestination();
+  }
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+
   document.getElementById('search-ride-form').addEventListener('submit', function(event) {
     event.preventDefault();
-    
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    const startingPoint = document.getElementById('starting_point').value;
-    const startingPointCoords = document.getElementById('starting_point_coords').value;
-    const destination = document.getElementById('destination').value;
-    const destinationCoords = document.getElementById('destination_coords').value;
-    const startingHour = document.getElementById('starting_hour').value;
-    const passengers = document.getElementById('passengers').value;
-  
-    const data = {
-      csrfmiddlewaretoken: csrftoken,
-      starting_point: startingPoint,
-      starting_point_coords: startingPointCoords,
-      destination: destination,
-      destination_coords: destinationCoords,
-      starting_hour: startingHour,
-      passengers: passengers
-    };
 
-    console.log("Enviando dados:", data);
-  
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    const payload = {
+      starting_hour: document.getElementById('starting_hour').value,
+      passengers: document.getElementById('passengers').value,
+      starting_point_address: document.getElementById('starting-point-address').value,
+      starting_point_latitude: document.getElementById('starting-point-latitude').value,
+      starting_point_longitude: document.getElementById('starting-point-longitude').value,
+      destination_address: document.getElementById('destination-address').value,
+      destination_latitude: document.getElementById('destination-latitude').value,
+      destination_longitude: document.getElementById('destination-longitude').value,
+    }
+
+    console.log("Enviando dados:", payload);
+
     fetch("{% url 'ride:search_ride' %}", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrftoken
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(payload)
     })
     .then(response => {
       if (!response.ok) {
@@ -136,7 +244,7 @@
         updateRides(data.rides);
       } else {
         const solicitacao = document.getElementById('solicitacao');
-        solicitacao.innerHTML = '<div class="alert alert-warning" role="alert">Não encontramos sua carona, porém uma solicitação foi criada com sucesso. Assim que ela for atendida, você será notificado.</div>';
+        solicitacao.innerHTML = '<div class="alert alert-warning mt-3" role="alert">Não encontramos sua carona, porém uma solicitação foi criada com sucesso. Assim que ela for atendida, você será notificado.</div>';
       }
     })
     .catch((error) => {
@@ -155,11 +263,10 @@
   
     return `${formattedDate} às ${formattedTime}`;
   }
-  
 
   function updateRides(rides) {
     const rideResultsContainer = document.getElementById('ride-results');
-  
+
     rideResultsContainer.innerHTML = ''; // Limpar resultados anteriores
     rides.forEach(ride => {
       const rideCard = document.createElement('div');
@@ -193,34 +300,5 @@
       rideResultsContainer.appendChild(rideCard);
     });
   }
-
-  function initAutocomplete() {
-    const inputStart = document.getElementById("starting_point");
-    const inputEnd = document.getElementById("destination");
-
-    const autocompleteStart = new google.maps.places.Autocomplete(inputStart);
-    const autocompleteEnd = new google.maps.places.Autocomplete(inputEnd);
-
-    autocompleteStart.addListener('place_changed', function() {
-      const place = autocompleteStart.getPlace();
-      if (!place.geometry) {
-        alert("No details available for input: '" + place.name + "'");
-        return;
-      }
-      const location = place.geometry.location;
-      document.getElementById('starting_point_coords').value = `${location.lat()}, ${location.lng()}`;
-    });
-
-    autocompleteEnd.addListener('place_changed', function() {
-      const place = autocompleteEnd.getPlace();
-      if (!place.geometry) {
-        alert("No details available for input: '" + place.name + "'");
-        return;
-      }
-      const location = place.geometry.location;
-      document.getElementById('destination_coords').value = `${location.lat()}, ${location.lng()}`;
-    });
-  }
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7tOzctlkLRIJdLBUuFbbPy5YoKoB0jjA&libraries=places&callback=initAutocomplete"></script>
 {% endblock %}

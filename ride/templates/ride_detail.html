@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block custom_css %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container justify-content-center align-items-center vh-100">
+  <div class="row">
+    <h1 class="text-center mt-4 mb-0">CARONA</h1>
+  </div>
+  <hr class="my-5">
+  <div class="pb-5">
+    <div class="card shadow" style="border-radius: 15px; margin: auto">
+      <div class="card-body" style="padding: 36px;">
+        <div class="row">
+          <div class="col-sm-12 d-flex flex-row justify-content-between">
+            <h5 class="align-self-end">Detalhes da viagem</h5>
+            <div class="d-flex gap-2">
+              {% if is_driver and is_scheduled %}
+                <a href="{% url 'ride:cancel_ride' ride.id %}" class="btn btn-danger btn-md" style="width: 100px">Cancelar</a>
+                <a href="{% url 'ride:start_ride' ride.id %}" class="btn btn-dark btn-md" style="width: 100px">Iniciar</a>
+              {% endif %}
+              {% if is_driver and is_in_progress %}
+                <a href="{% url 'ride:finish_ride' ride.id %}" class="btn btn-dark btn-md" style="width: 100px">Finalizar</a>
+              {% endif %}
+            </div>
+          </div>
+          <hr class="mt-2">
+          <div class="col-12"><b>Motorista:</b> {{ ride.driver.username }} {% if not is_driver %}<a href="{% url 'ride:profile' ride.driver.id %}">Ver perfil</a>{% endif %}</div>
+          <div class="col-6"><b>Carro:</b> {{ ride.car.model }} - {{ ride.car.color }}</div>
+          <div class="col-6"><b>Placa:</b> {{ ride.car.plate }}</div>
+          <div class="col-sm-6">
+            <b>Data e Hora:</b> {{ ride.starting_hour }}
+          </div>
+          <div class="col-sm-6">
+            <b>Tempo previsto de viagem:</b> {{ ride.estimated_travel_time }} min
+          </div>
+          <div class="col-sm-6">
+            <b>Status da carona:</b> {{ ride.status_display_name }}
+          </div>
+        </div>
+        <div class="col-sm-12 mt-5">
+          <div class="d-flex flex-row justify-content-between">
+            <h5 class="align-self-end">Passageiros</h5>
+            {% if not is_driver %}
+              {% if is_passenger and is_scheduled %}
+                <a href="{% url 'ride:leave_ride' ride.id %}" class="btn btn-danger btn-md" style="width: 100px">Sair</a>
+              {% else %}
+                <a href="{% url 'ride:join_ride' ride.id %}" class="btn btn-success btn-md" style="width: 100px">Entrar</a>
+              {% endif %}
+            {% endif %}
+          </div>
+          <hr>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 mb-3">
+            {% if ride.passengers %}
+            <ul>
+              {% for passenger in ride.passengers %}
+              <li>
+                {{ passenger.username }} {% if not passenger.id == request.user.userprofile.id %}<a href="{% url 'ride:profile' passenger.id %}">Ver perfil</a>{% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+              Nenhum passageiro
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-sm-12 mt-5">
+          <h5>Local de partida</h5><hr>
+          <div class="col-12 mb-1"><b>Endereço:</b> {{ ride.starting_point.address }}</div>
+          <iframe
+            width="100%"
+            height="200"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}
+              &q={{ ride.starting_point.address }}&zoom=15">
+          </iframe>
+        </div>
+        <div class="col-sm-12 mt-5">
+          <h5>Destino</h5><hr>
+          <div class="col-12 mb-1"><b>Endereço:</b> {{ ride.destination.address }}</div>
+          <iframe
+            width="100%"
+            height="200"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}
+              &q={{ ride.destination.address }}&zoom=15">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block custom_js %}
+{% endblock %}
