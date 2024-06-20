@@ -9,6 +9,7 @@ from ride.views.authetication_view import authView
 from ride.views.edit_profile_view import EditProfileView
 from ride.views.add_car_view import add_car
 from ride.views.my_rides_view import MyRidesView
+from ride.views.rides_history_view import RidesHistoryView
 
 app_name = 'ride'
 
@@ -24,4 +25,5 @@ urlpatterns = [
     path('signup/', authView, name='signup'),
     path('perfil/addcar', add_car, name='add_car'),
     path('minhas-caronas/', MyRidesView.as_view(), name='my_rides'),
+    path('historico/', RidesHistoryView.as_view(), name='rides_history'),
 ]
