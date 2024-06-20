@@ -1,20 +1,23 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
+from ride.constants import RideStatus
 
+User = get_user_model()
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    degree = models.CharField(max_length=255, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
 
-
 class Location(models.Model):
+    address = models.CharField(max_length=200)
     latitude = models.FloatField()
     longitude = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -25,8 +28,7 @@ class Location(models.Model):
 
 
 class Car(models.Model):
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='cars')
     model = models.CharField(max_length=100)
     year = models.IntegerField()
     color = models.CharField(max_length=100)
@@ -35,11 +37,16 @@ class Car(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.owner.user.username} - {self.plate}"
+        return f"{self.model} - {self.color}"
 
 
 class Ride(models.Model):
+    status = models.CharField(
+        max_length=50, choices=[(status.name, status.value) for status in RideStatus],
+        default=RideStatus.SCHEDULED.value
+    )
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    available_seats = models.IntegerField()
     passengers = models.ManyToManyField(UserProfile, related_name='rides', blank=True)
     starting_hour = models.DateTimeField()
     starting_point = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='rides_as_starting_point')
@@ -48,6 +55,9 @@ class Ride(models.Model):
     real_travel_time = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    canceled_at = models.DateTimeField(blank=True, null=True)
+    finished_at = models.DateTimeField(blank=True, null=True)
+    started_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.car.model} - {self.starting_hour}"
@@ -62,7 +72,7 @@ class RideRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.author} - {self.starting_hour}"
+        return f"{self.created_by} - {self.starting_hour}"
 
 
 class Review(models.Model):

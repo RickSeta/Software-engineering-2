@@ -1,7 +1,101 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<h1>Perfil</h1>
-
+{% load static %}
+  <div class="container h-100">
+    <div class="row">
+      <h1 class="text-center mt-4 mb-0">PERFIL</h1>
+    </div>
+    <hr class="my-5">
+    <div class="row d-flex justify-content-center align-items-center ">
+      <div class="col col-lg-6 mb-4 mb-lg-0">
+        <div class="card mb-3" style="border-radius: .5rem;">
+          <div class="row g-0">
+            <div class="col-md-4 gradient-custom text-center text-white"
+              style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+              {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Foto de perfil" class="rounded-circle img-fluid my-5" style="width: 120px; height: 120px; object-fit:cover" />
+              {% else %}
+                <img src="{% static 'images/undefined_profile_image.jpg' %}" alt="Profile Picture" class="rounded-circle img-fluid my-5" style="width: 120px;" />
+              {% endif %}
+              <h5>{{ profile.user }}</h5>
+              {% if profile.rating %}
+                <p style="font-size: 18px">
+                  <i class="bi bi-star-fill" style="color: white;"></i>
+                  <span>{{ profile.rating }}</span>
+                </p>
+              {% endif %}
+              <i class="far fa-edit mb-5"></i>
+            </div>
+            <div class="col-md-8">
+              <div class="card-body p-4">
+                {% if can_edit %}
+                <h6 class="d-flex justify-content-between">
+                  Informações
+                  <a href="{% url 'ride:edit_profile' %}"><i class="bi bi-pencil-square" style="color: black;"></i></a>
+                </h6>
+                {% else %}
+                <h6>Informações</h6>
+                {% endif %}
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  <div class="col-6 mb-3">
+                    <h6>Nº de Caronas</h6>
+                    <p class="text-muted">{{ n_rides }}</p>
+                  </div>
+                  {% if profile.degree %}
+                    <div class="col-6 mb-3">
+                      <h6>Curso</h6>
+                      <p class="text-muted">{{ profile.degree }}</p>
+                    </div>
+                  {% endif %}
+                </div>
+                {% if can_edit %}
+                <h6 class="d-flex justify-content-between">
+                  Carros <a href="#" data-bs-toggle="modal" data-bs-target="#addCarModal"><i class="bi bi-plus-circle-fill" style="color: black;"></i></a>
+                </h6>
+                {% else %}
+                <h6>Carros</h6>
+                {% endif %}
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  {% if cars %}
+                  {% for car in cars %}
+                    <div class="col-12 mb-3">
+                      <h6>{{ car }}</h6>
+                      <p class="text-muted">{{ car.plate }}</p>
+                    </div>
+                  {% endfor %}
+                  {% else %}
+                    <p class="text-muted">Nenhum carro cadastrado</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="addCarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastrar Carro</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'ride:add_car' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ car_form.as_p }}
+          <div class="d-flex justify-content-end mt-5">
+            <button type="button" class="btn btn-secondary mx-3" data-bs-dismiss="modal">Voltar</button>
+            <button type="submit" class="btn btn-success">Cadastrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
