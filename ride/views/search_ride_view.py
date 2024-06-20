@@ -28,7 +28,6 @@ class SearchRideView(LoginRequiredMixin, GoogleMapsAPIMixin, TemplateView):
             data = json.loads(request.body)
             starting_hour = data.get('starting_hour')
             passengers = data.get('passengers')
-            import ipdb; ipdb.set_trace()
             starting_point_location, _ = Location.objects.get_or_create(
                 latitude=data['starting_point_latitude'], longitude=data['starting_point_longitude'],
                 defaults={'address': data['starting_point_address']}
