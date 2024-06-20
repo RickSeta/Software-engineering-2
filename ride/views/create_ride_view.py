@@ -13,7 +13,7 @@ class CreateRideView(LoginRequiredMixin, GoogleMapsAPIMixin, FormView):
     use_case = CreateRideUseCase()
 
     def get_initial(self):
-        return {'user': UserProfile.objects.first()}
+        return {'user': UserProfile.objects.get(user=self.request.user)}
 
     def form_valid(self, form):
         ride = self.use_case.execute(form.cleaned_data)

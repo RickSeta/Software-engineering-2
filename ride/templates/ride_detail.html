@@ -24,7 +24,7 @@
             <b>Data e Hora:</b> {{ ride.starting_hour }}
           </div>
           <div class="col-sm-6">
-            <b>Tempo previsto de viagem:</b> {{ ride.estimated_travel_time }}
+            <b>Tempo previsto de viagem:</b> {{ ride.estimated_travel_time }} min
           </div>
           <div class="col-sm-6">
             <b>Status da corrida:</b> {{ ride.status_display_name }}
@@ -47,11 +47,11 @@
           <div class="col-sm-12 mb-3">
             {% if ride.passengers %}
             <ul>
+              {% for passenger in ride.passengers %}
               <li>
-                {% for passenger in ride.passengers %}
-                  {{ passenger.username }} {% if not passenger.id == request.user.userprofile.id %}<a href="{% url 'ride:profile' passenger.id %}">Ver perfil</a>{% endif %}
-                {% endfor %}
+                {{ passenger.username }} {% if not passenger.id == request.user.userprofile.id %}<a href="{% url 'ride:profile' passenger.id %}">Ver perfil</a>{% endif %}
               </li>
+              {% endfor %}
             </ul>
             {% else %}
               Nenhum passageiro
