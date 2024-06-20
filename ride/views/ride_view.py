@@ -23,6 +23,8 @@ class RideView(LoginRequiredMixin, GoogleMapsAPIMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['is_scheduled'] = context['ride'].status == RideStatus.SCHEDULED.value
+        context['is_in_progress'] = context['ride'].status == RideStatus.IN_PROGRESS.value
         context['is_driver'] = self.request.user.userprofile.id == context['ride'].driver.id
         is_passenger = False
         for passenger in context['ride'].passengers:
@@ -52,4 +54,15 @@ def start_ride(request, ride_id):
         ride.save()
     except Exception as e:
         messages.error(request, 'Erro ao iniciar carona: {}'.format(e))
-    return redirect(request.META.get('HTTP_REFERER', 'ride:search_ride'))
+    return redirect(request.META.get('HTTP_REFERER', 'ride:my_rides'))
+
+@login_required
+def finish_ride(request, ride_id):
+    try:
+        ride = get_object_or_404(Ride, id=ride_id)
+        ride.status = RideStatus.COMPLETED.value
+        ride.finished_at = datetime.now()
+        ride.save()
+    except Exception as e:
+        messages.error(request, 'Erro ao finalizar carona: {}'.format(e))
+    return redirect('ride:my_rides')
